@@ -36,26 +36,59 @@ class Room
 
     public function setUnavailable(Event $event)
     {
-        $this->unavailables[] = $event->start; // test
+        $this->unavailables[] = $event; // test
     }
 }
 
 class Importer 
 {
-    private static function addRoom(string $roomId, array $roomsOccupied, array $json)
+    private $json;
+    private $roomsOccupied;
+
+    private function __construct(array &$json, array &$roomsOccupied)
     {
-        if (!array_key_exists($roomId, $roomsOccupied)) {
-            $roomJson = $json['veranstaltungsorte'][$roomId]; // exception handling
-            if (count($roomJson) == 0) return; // temporary
-            $roomsOccupied[$roomId] = new Room($roomJson);
-        }
-        $room = $roomsOccupied[$roomId];
+        $this->json = &$json;
+        $this->roomsOccupied = &$roomsOccupied;
     }
 
-    private static function makeEvent(string $eventId, array $json) : Event
+    // private function removeEmpty($json) : array
+    // {
+    //     if (!isset($json)) return []; // temporary
+    //     $cleanJson = [];
+    //     foreach ($this->json as $element) {
+    //         if (count($element) > 0) $cleanJson[] = $element;
+    //     }
+    //     return $cleanJson;
+    // }
+
+    private function getDays(string $week) : array
     {
-        $eventJson = $json['termine'][$eventId]; // exception handling
-        if (count($eventJson) == 0) return NULL; // temporary
+        $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage']; // exception handling
+        // return $this->removeEmpty($days);
+        return $days;
+    }
+
+    private function getEventInfos(array $day)
+    {
+        // return $this->removeEmpty($day['termine']); // exception handling
+        if (count($day) == 0) return [];
+        return $day['termine'];
+    }
+
+    private function getRoom(string $roomId) : Room
+    {
+        if (!array_key_exists($roomId, $this->roomsOccupied)) {
+            $roomJson = $this->json['veranstaltungsorte'][$roomId]; // exception handling
+            if (count($roomJson) == 0) throw new Exception("room json empty"); // temporary
+            $this->roomsOccupied[$roomId] = new Room($roomJson);
+        }
+        return $this->roomsOccupied[$roomId];
+    }
+
+    private function makeEvent(string $eventId) : Event
+    {
+        $eventJson = $this->json['termine'][$eventId]; // exception handling
+        if (count($eventJson) == 0) throw new Exception("event json empty"); // temporary
         
         $eventDate = $eventJson['datum'];
         $eventStart = $eventJson['beginn'];
@@ -72,23 +105,25 @@ class Importer
     {
         $response = file_get_contents('response.json');
         $json = json_decode($response, true);
-        $parser = new Parser($json);
-
         $roomsOccupied = [];
+        $importer = new Importer($json, $roomsOccupied);
 
         while ($start <= $end) {
             $week = $start->format('Y') . '-W' . $start->format('W');
 
-            foreach ($parser->getDays($week) as $day) {
-                foreach ($parser->getEvents($day) as $eventInfo) {
-                    $roomId = $eventInfo['veranstaltungsort'];
-                    self::addRoom($roomId, $roomsOccupied, $json);
-
-                    $eventId = $eventInfo['id'];
-                    $event = self::makeEvent($eventId, $json);
-
-                    $room = $roomsOccupied[$roomId];
-                    $room->setUnavailable($event);
+            foreach ($importer->getDays($week) as $day) {
+                foreach ($importer->getEventInfos($day) as $eventInfo) {
+                    try {
+                        $roomId = $eventInfo['veranstaltungsort'];
+                        $room = $importer->getRoom($roomId);
+    
+                        $eventId = $eventInfo['id'];
+                        $event = $importer->makeEvent($eventId);
+    
+                        $room->setUnavailable($event);
+                    } catch (Exception $e) {
+                        // echo $e->getMessage();
+                    }
                 }
             }
             $start->add(new DateInterval('P7D'));
@@ -97,41 +132,11 @@ class Importer
     }
 }
 
-class Parser
-{
-    private $json;
-
-    public function __construct(array $json)
-    {
-        $this->json = $json;
-    }
-
-    function getDays(string $week) : array
-    {
-        // also handle exceptions
-        $days = $json['stundenplan']['kalenderwochen'][$week]['wochentage'];
-        return removeEmpty($days);
-    }
-
-    function getEvents(array $day)
-    {
-        return removeEmpty($day['termine']);
-    }
-
-    private function removeEmpty(array &$json) : array
-    {
-        $cleanJson = [];
-        foreach ($json as $element) {
-            if (count($element) > 0) $cleanJson[] = $element;
-        }
-        return $cleanJson;
-    }
-}
-
+// test
 $start = new DateTime();
 $start->setTimeStamp(1442786400 + 604800);
 $end = new DateTime();
 $end->setTimeStamp(1442786400 + 604800);
 
-$rooms = DataImport::query($start, $end);
+$rooms = Importer::query($start, $end);
 print_r($rooms);
