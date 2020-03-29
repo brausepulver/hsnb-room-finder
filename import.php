@@ -1,6 +1,73 @@
 <?php
+
+class Event
+{
+    public $start;
+    public $end;
+
+    public function __construct(DateTimeInterface $start, DateTimeInterface $end)
+    {
+        $this->start = $start;
+        $this->end = $end;
+    }
+}
+
+class Room
+{
+    public $id;
+    public $shortName;
+    public $name;
+
+    private $unavailables;
+
+    public function __construct($json)
+    {
+        $this->id = $json['id'];
+        $this->shortName = $json['kurzname'];
+        $this->name = $json['name'];
+
+        $this->unavailables = [];
+    }
+
+    public function __toString()
+    {
+        return $this->shortName;
+    }
+
+    public function setUnavailable(Event $event)
+    {
+        $this->unavailables[] = $event->start; // test
+    }
+}
+
 class Importer 
 {
+    private static function addRoom(string $roomId, array $roomsOccupied, array $json)
+    {
+        if (!array_key_exists($roomId, $roomsOccupied)) {
+            $roomJson = $json['veranstaltungsorte'][$roomId]; // exception handling
+            if (count($roomJson) == 0) return; // temporary
+            $roomsOccupied[$roomId] = new Room($roomJson);
+        }
+        $room = $roomsOccupied[$roomId];
+    }
+
+    private static function makeEvent(string $eventId, array $json) : Event
+    {
+        $eventJson = $json['termine'][$eventId]; // exception handling
+        if (count($eventJson) == 0) return NULL; // temporary
+        
+        $eventDate = $eventJson['datum'];
+        $eventStart = $eventJson['beginn'];
+        $eventEnd = $eventJson['ende'];
+
+        $format = 'Y-m-d H:i:s';
+        $eventStartDateTime = DateTime::createFromFormat($format, $eventDate . ' ' . $eventStart);
+        $eventEndDateTime = DateTime::createFromFormat($format, $eventDate . ' ' . $eventEnd);
+
+        return new Event($eventStartDateTime, $eventEndDateTime);
+    }
+
     public static function query(DateTimeInterface $start, DateTimeInterface $end) : array
     {
         $response = file_get_contents('response.json');
@@ -13,56 +80,20 @@ class Importer
             $week = $start->format('Y') . '-W' . $start->format('W');
 
             foreach ($parser->getDays($week) as $day) {
-                foreach ($parser->getEvents($day) as $event) {
-                    $roomId = $event['veranstaltungsort'];
-                    self::addRoom($roomId, $roomsOccupied);
+                foreach ($parser->getEvents($day) as $eventInfo) {
+                    $roomId = $eventInfo['veranstaltungsort'];
+                    self::addRoom($roomId, $roomsOccupied, $json);
 
-                    $eventJson = $json['termine'][$event['id']];
-                    if (count($eventJson) == 0) continue; // temporary
-                    $eventDate = $eventJson['datum'];
-                    $eventStart = $eventJson['beginn'];
-                    $eventEnd = $eventJson['ende'];
+                    $eventId = $eventInfo['id'];
+                    $event = self::makeEvent($eventId, $json);
 
-                    $eventStartDate = DateTime::createFromFormat($format, $eventDate . ' ' . $eventStart);
-                    $eventEndDate = DateTime::createFromFormat($format, $eventDate . ' ' . $eventEnd);
-
-                    $room->setUnavailable($eventStartDate, $eventEndDate);
+                    $room = $roomsOccupied[$roomId];
+                    $room->setUnavailable($event);
                 }
             }
-
             $start->add(new DateInterval('P7D'));
         }
-
         return $roomsOccupied;
-    }
-
-    private static function addRoom(string $roomId, array $roomsOccupied)
-    {
-        if (!array_key_exists($roomId, $roomsOccupied)) {
-            $roomJson = $json['veranstaltungsorte'][$roomId]; // exception handling
-            if (count($roomJson) == 0) return; // temporary
-            $roomsOccupied[$roomId] = new Room($roomJson);
-        }
-        $room = $roomsOccupied[$roomId];
-    }
-
-    private static function makeDateTime(string $eventDate, string $eventTime)
-    {
-        $format = 'Y-m-d H:i:s';
-        return DateTime::createFromFormat($format, $eventDate . ' ' . $eventStart);
-    }
-
-    public static function invertRooms($rooms) : array
-    {
-
-    }
-}
-
-class Event
-{
-    public function __construct(DateTimeInterface $start, DateTimeInterface $end)
-    {
-        
     }
 }
 
@@ -94,34 +125,6 @@ class Parser
             if (count($element) > 0) $cleanJson[] = $element;
         }
         return $cleanJson;
-    }
-}
-
-class Room
-{
-    public $id;
-    public $shortName;
-    public $name;
-
-    private $unavailables;
-
-    public function __construct($json)
-    {
-        $this->id = $json['id'];
-        $this->shortName = $json['kurzname'];
-        $this->name = $json['name'];
-
-        $this->unavailables = [];
-    }
-
-    public function __toString()
-    {
-        return $this->shortName;
-    }
-
-    public function setUnavailable(DateTimeInterface $start, DateTimeInterface $end)
-    {
-        $this->unavailables[] = $start; // test
     }
 }
 
