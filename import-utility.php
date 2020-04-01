@@ -17,25 +17,16 @@ class Room
     public $shortName;
     public $name;
 
-    private $unavailables;
-
     public function __construct($json)
     {
         $this->id = $json['id'];
         $this->shortName = $json['kurzname'];
         $this->name = $json['name'];
-
-        $this->unavailables = [];
     }
 
     public function __toString()
     {
         return $this->shortName;
-    }
-
-    public function setUnavailable(Event $event)
-    {
-        $this->unavailables[] = $event; // test
     }
 }
 
@@ -63,7 +54,7 @@ class TimeVector
     private function buildTimeArray(DateInterval $offset, array $default) : array
     {
         $times = [];
-        $start = clone ($this->start);
+        $start = clone $this->start;
 
         while ($start <= $this->end) {
             $times[] = $default;

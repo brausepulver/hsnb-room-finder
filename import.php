@@ -14,7 +14,7 @@ class Importer
         $this->end = $end;
     }
 
-    public static function query(DateTimeInterface $start, DateTimeInterface $end)
+    public static function query(DateTimeInterface $start, DateTimeInterface $end) : TimeVector
     {
         // build query
         $url = 'https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Termin&seite=plandaten';
@@ -38,8 +38,8 @@ class Importer
         $times = new TimeVector($importer->start, $importer->end, new DateInterval('PT15M'), $rooms);
 
         // get events and remove rooms at those times
-        $indexTime = clone $importer->start;
-        while ($indexTime < $importer->end) { // in case time span is more than one week
+        $weekCounter = clone $importer->start;
+        while ($weekCounter < $importer->end) { // in case time span is more than one week
             $week = $start->format('Y') . '-W' . $start->format('W');
 
             foreach ($importer->getDays($week) as $day) {
@@ -60,7 +60,7 @@ class Importer
                     }
                 }
             }
-            $indexTime->add(new DateInterval('P7D'));
+            $weekCounter->add(new DateInterval('P7D'));
         }
         return $times;
     }
@@ -102,8 +102,6 @@ class Importer
 
 // test
 $start = new DateTime("today 08:00:00");
-echo $start->format(DateTimeInterface::ISO8601) . "\n";
 $end = new DateTime("today 10:00:00");
-echo $end->format(DateTimeInterface::ISO8601) . "\n";
 
 $rooms = Importer::query($start, $end);
