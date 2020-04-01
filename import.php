@@ -1,130 +1,86 @@
 <?php
-class Event
-{
-    public $start;
-    public $end;
-
-    public function __construct(DateTimeInterface $start, DateTimeInterface $end)
-    {
-        $this->start = $start;
-        $this->end = $end;
-    }
-}
-
-class Room
-{
-    public $id;
-    public $shortName;
-    public $name;
-
-    private $unavailables;
-
-    public function __construct($json)
-    {
-        $this->id = $json['id'];
-        $this->shortName = $json['kurzname'];
-        $this->name = $json['name'];
-
-        $this->unavailables = [];
-    }
-
-    public function __toString()
-    {
-        return $this->shortName;
-    }
-
-    public function setUnavailable(Event $event)
-    {
-        $this->unavailables[] = $event; // test
-    }
-}
-
-class TimeVector
-{
-    private $timeArray;
-    public $start;
-
-    public function __construct(array $timeArray, DateTimeInterface $start)
-    {
-        $this->timeArray = $timeArray;
-        $this->start = $start;
-    }
-
-    public function get(DateTimeInterface $indexTime) : array
-    {
-        if ($indexTime < $start)
-            throw new Exception("invalid time index");
-
-        $seconds = $indexTime->getTimestamp() - $start->getTimestamp();
-        $minutes = $seconds / 60;
-        $i = $minutes / 15; // array contains rooms in 15 minute steps
-
-        return $this->timeArray($i);
-    }
-}
+require_once('./import-utility.php');
 
 class Importer 
 {
     private $json;
-    private $roomsOccupied;
+    private $start;
+    private $end;
 
-    private function __construct(array &$json, array &$roomsOccupied)
+    private function __construct(array $json, DateTimeInterface $start, DateTimeInterface $end)
     {
-        $this->json = &$json;
-        $this->roomsOccupied = &$roomsOccupied;
+        $this->json = $json;
+        $this->start = $start;
+        $this->end = $end;
     }
 
-    // private function removeEmpty($json) : array
-    // {
-    //     if (!isset($json)) return []; // temporary
-    //     $cleanJson = [];
-    //     foreach ($this->json as $element) {
-    //         if (count($element) > 0) $cleanJson[] = $element;
-    //     }
-    //     return $cleanJson;
-    // }
+    public static function query(DateTimeInterface $start, DateTimeInterface $end)
+    {
+        // build query
+        $url = 'https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Termin&seite=plandaten';
+        $data = [
+            'dvon' => $start->format('Y-m-d'),
+            'dbis' => $end->format('Y-m-d'),
+            // these options return less rooms => do not use?
+            // 'zvon' => $start->format('H:i:s'),
+            // 'zbis' => $end->format('H:i:s')
+        ];
+        $query = $url . "&" . http_build_query($data);
+
+        // get response and decode as json
+        $response = file_get_contents($query);
+        $json = json_decode($response, true);
+
+        $importer = new Importer($json, $start, $end);
+
+        // initialize the time vector with all possible rooms for every index
+        $rooms = $importer->getRooms();
+        $times = new TimeVector($importer->start, $importer->end, new DateInterval('PT15M'), $rooms);
+
+        // in case time span is more than one week
+        $indexTime = clone ($importer->start); // parens necessary?
+        while ($indexTime < $importer->end) {
+            $week = $start->format('Y') . '-W' . $start->format('W');
+
+            foreach ($importer->getDays($week) as $day) {
+                foreach ($importer->getEventInfos($day) as $eventInfo) {
+                    $roomId = $eventInfo['veranstaltungsort'];
+
+                    $eventId = $eventInfo['id'];
+                    try {
+                        $event = $importer->makeEvent($eventId);
+                    } catch (Exception $e) {
+                        continue;
+                    }
+
+                    $eventTime = clone $event->start;
+                    while ($eventTime < $event->end) {
+                        $times->remove($eventTime, $roomId);
+                        $eventTime->add($times->offset);
+                    }
+                }
+            }
+            $indexTime->add(new DateInterval('P7D'));
+        }
+        return $times;
+    }
+
+    private function getRooms() : array
+    {
+        return $this->json['veranstaltungsorte'];
+    }
 
     private function getDays(string $week) : array
     {
         $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage']; // exception handling
-        // return $this->removeEmpty($days);
+        if (!isset($days)) return []; // temporary
         return $days;
     }
 
-    private function getEventInfos(array $day)
+    private function getEventInfos(array $day) : array
     {
-        // return $this->removeEmpty($day['termine']); // exception handling
-        if (count($day) == 0) return [];
-        return $day['termine'];
-    }
-
-    // private function getRoom(string $roomId) : Room
-    // {
-    //     if (!array_key_exists($roomId, $this->roomsOccupied)) {
-    //         $roomJson = $this->json['veranstaltungsorte'][$roomId]; // exception handling
-    //         if (count($roomJson) == 0) throw new Exception("room json empty"); // temporary
-    //         $this->roomsOccupied[$roomId] = new Room($roomJson);
-    //     }
-    //     return $this->roomsOccupied[$roomId];
-    // }
-
-    private function getRooms() : array
-    {
-        $rooms = [];
-        // foreach ($this->json['veranstaltungsorte'] as $roomJson) {
-        //     $rooms[$roomJson['id']] = new Room($roomJson);
-        // }
-        return $this->json['veranstaltungsorte'];
-    }
-
-    private function makeRoomTimes($start, $end, $rooms) : array
-    {
-        $roomTimes = [];
-        while ($start <= $end) {
-            $roomTimes[] = $rooms;
-            $start->add(new DateInterval('PT15M'));
-        }
-        return $roomTimes;
+        if (count($day) == 0) return []; // temporary
+        return $day['termine']; // exception handling
     }
 
     private function makeEvent(string $eventId) : Event
@@ -142,68 +98,12 @@ class Importer
 
         return new Event($eventStartDateTime, $eventEndDateTime);
     }
-
-    public static function query(DateTimeInterface $start, DateTimeInterface $end) : array
-    {
-        $response = file_get_contents('response.json');
-        $json = json_decode($response, true);
-
-        $array = [];
-        $importer = new Importer($json, $array); // refactor
-
-        $rooms = $importer->getRooms();
-        $roomTimes = $importer->makeRoomTimes($start, $end, $rooms);
-
-        while ($start <= $end) {
-            $week = $start->format('Y') . '-W' . $start->format('W');
-
-            foreach ($importer->getDays($week) as $day) {
-                foreach ($importer->getEventInfos($day) as $eventInfo) {
-                    $roomId = $eventInfo['veranstaltungsort'];
-
-                    $eventId = $eventInfo['id'];
-                    $event = $importer->makeEvent($eventId);
-
-                    $timeIndex = $event->start;
-                    while ($eventStart <= $event->end) {
-                        unset($roomTimes[$timeIndex][$roomId]);
-                        $timeIndex->add(new DateInterval('PT15M'));
-                    }
-                }
-            }
-            $start->add(new DateInterval('P7D'));
-        }
-        return new TimeVector($roomTimes, $start);
-
-        // while ($start <= $end) {
-        //     $week = $start->format('Y') . '-W' . $start->format('W');
-
-        //     foreach ($importer->getDays($week) as $day) {
-        //         foreach ($importer->getEventInfos($day) as $eventInfo) {
-        //             try {
-        //                 $roomId = $eventInfo['veranstaltungsort'];
-        //                 $room = $importer->getRoom($roomId);
-    
-        //                 $eventId = $eventInfo['id'];
-        //                 $event = $importer->makeEvent($eventId);
-    
-        //                 $room->setUnavailable($event);
-        //             } catch (Exception $e) {
-        //                 // echo $e->getMessage();
-        //             }
-        //         }
-        //     }
-        //     $start->add(new DateInterval('P7D'));
-        // }
-        // return $roomsOccupied;
-    }
 }
 
 // test
-$start = new DateTime();
-$start->setTimeStamp(1442786400 + 604800);
-$end = new DateTime();
-$end->setTimeStamp(1442786400 + 2 * 604800);
+$start = new DateTime("today 08:00:00");
+echo $start->format(DateTimeInterface::ISO8601) . "\n";
+$end = new DateTime("today 10:00:00");
+echo $end->format(DateTimeInterface::ISO8601) . "\n";
 
 $rooms = Importer::query($start, $end);
-print_r($rooms);
