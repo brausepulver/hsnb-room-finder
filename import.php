@@ -1,5 +1,4 @@
 <?php
-
 class Event
 {
     public $start;
@@ -40,6 +39,30 @@ class Room
     }
 }
 
+class TimeVector
+{
+    private $timeArray;
+    public $start;
+
+    public function __construct(array $timeArray, DateTimeInterface $start)
+    {
+        $this->timeArray = $timeArray;
+        $this->start = $start;
+    }
+
+    public function get(DateTimeInterface $indexTime) : array
+    {
+        if ($indexTime < $start)
+            throw new Exception("invalid time index");
+
+        $seconds = $indexTime->getTimestamp() - $start->getTimestamp();
+        $minutes = $seconds / 60;
+        $i = $minutes / 15; // array contains rooms in 15 minute steps
+
+        return $this->timeArray($i);
+    }
+}
+
 class Importer 
 {
     private $json;
@@ -75,14 +98,33 @@ class Importer
         return $day['termine'];
     }
 
-    private function getRoom(string $roomId) : Room
+    // private function getRoom(string $roomId) : Room
+    // {
+    //     if (!array_key_exists($roomId, $this->roomsOccupied)) {
+    //         $roomJson = $this->json['veranstaltungsorte'][$roomId]; // exception handling
+    //         if (count($roomJson) == 0) throw new Exception("room json empty"); // temporary
+    //         $this->roomsOccupied[$roomId] = new Room($roomJson);
+    //     }
+    //     return $this->roomsOccupied[$roomId];
+    // }
+
+    private function getRooms() : array
     {
-        if (!array_key_exists($roomId, $this->roomsOccupied)) {
-            $roomJson = $this->json['veranstaltungsorte'][$roomId]; // exception handling
-            if (count($roomJson) == 0) throw new Exception("room json empty"); // temporary
-            $this->roomsOccupied[$roomId] = new Room($roomJson);
+        $rooms = [];
+        // foreach ($this->json['veranstaltungsorte'] as $roomJson) {
+        //     $rooms[$roomJson['id']] = new Room($roomJson);
+        // }
+        return $this->json['veranstaltungsorte'];
+    }
+
+    private function makeRoomTimes($start, $end, $rooms) : array
+    {
+        $roomTimes = [];
+        while ($start <= $end) {
+            $roomTimes[] = $rooms;
+            $start->add(new DateInterval('PT15M'));
         }
-        return $this->roomsOccupied[$roomId];
+        return $roomTimes;
     }
 
     private function makeEvent(string $eventId) : Event
@@ -105,30 +147,55 @@ class Importer
     {
         $response = file_get_contents('response.json');
         $json = json_decode($response, true);
-        $roomsOccupied = [];
-        $importer = new Importer($json, $roomsOccupied);
+
+        $array = [];
+        $importer = new Importer($json, $array); // refactor
+
+        $rooms = $importer->getRooms();
+        $roomTimes = $importer->makeRoomTimes($start, $end, $rooms);
 
         while ($start <= $end) {
             $week = $start->format('Y') . '-W' . $start->format('W');
 
             foreach ($importer->getDays($week) as $day) {
                 foreach ($importer->getEventInfos($day) as $eventInfo) {
-                    try {
-                        $roomId = $eventInfo['veranstaltungsort'];
-                        $room = $importer->getRoom($roomId);
-    
-                        $eventId = $eventInfo['id'];
-                        $event = $importer->makeEvent($eventId);
-    
-                        $room->setUnavailable($event);
-                    } catch (Exception $e) {
-                        // echo $e->getMessage();
+                    $roomId = $eventInfo['veranstaltungsort'];
+
+                    $eventId = $eventInfo['id'];
+                    $event = $importer->makeEvent($eventId);
+
+                    $eventStart = $event->start;
+                    while ($eventStart <= $event->end) {
+                        unset($roomTimes[$eventStart][$roomId]);
+                        $eventStart->add(new DateInterval('PT15M'));
                     }
                 }
             }
             $start->add(new DateInterval('P7D'));
         }
-        return $roomsOccupied;
+        return $roomTimes;
+
+        // while ($start <= $end) {
+        //     $week = $start->format('Y') . '-W' . $start->format('W');
+
+        //     foreach ($importer->getDays($week) as $day) {
+        //         foreach ($importer->getEventInfos($day) as $eventInfo) {
+        //             try {
+        //                 $roomId = $eventInfo['veranstaltungsort'];
+        //                 $room = $importer->getRoom($roomId);
+    
+        //                 $eventId = $eventInfo['id'];
+        //                 $event = $importer->makeEvent($eventId);
+    
+        //                 $room->setUnavailable($event);
+        //             } catch (Exception $e) {
+        //                 // echo $e->getMessage();
+        //             }
+        //         }
+        //     }
+        //     $start->add(new DateInterval('P7D'));
+        // }
+        // return $roomsOccupied;
     }
 }
 
@@ -136,7 +203,7 @@ class Importer
 $start = new DateTime();
 $start->setTimeStamp(1442786400 + 604800);
 $end = new DateTime();
-$end->setTimeStamp(1442786400 + 604800);
+$end->setTimeStamp(1442786400 + 2 * 604800);
 
 $rooms = Importer::query($start, $end);
 print_r($rooms);
