@@ -164,16 +164,16 @@ class Importer
                     $eventId = $eventInfo['id'];
                     $event = $importer->makeEvent($eventId);
 
-                    $eventStart = $event->start;
+                    $timeIndex = $event->start;
                     while ($eventStart <= $event->end) {
-                        unset($roomTimes[$eventStart][$roomId]);
-                        $eventStart->add(new DateInterval('PT15M'));
+                        unset($roomTimes[$timeIndex][$roomId]);
+                        $timeIndex->add(new DateInterval('PT15M'));
                     }
                 }
             }
             $start->add(new DateInterval('P7D'));
         }
-        return $roomTimes;
+        return new TimeVector($roomTimes, $start);
 
         // while ($start <= $end) {
         //     $week = $start->format('Y') . '-W' . $start->format('W');
