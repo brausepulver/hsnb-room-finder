@@ -37,9 +37,9 @@ class Importer
         $rooms = $importer->getRooms();
         $times = new TimeVector($importer->start, $importer->end, new DateInterval('PT15M'), $rooms);
 
-        // in case time span is more than one week
-        $indexTime = clone ($importer->start); // parens necessary?
-        while ($indexTime < $importer->end) {
+        // get events and remove rooms at those times
+        $indexTime = clone $importer->start;
+        while ($indexTime < $importer->end) { // in case time span is more than one week
             $week = $start->format('Y') . '-W' . $start->format('W');
 
             foreach ($importer->getDays($week) as $day) {
