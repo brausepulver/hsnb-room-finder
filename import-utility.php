@@ -77,9 +77,12 @@ class TimeVector
 
     private function timeToIndex(DateTimeInterface $indexTime) : int
     {
-        $seconds = $indexTime->getTimestamp() - $this->start->getTimestamp();
-        $minutes = $seconds / 60;
-        $i = $minutes / 15; // array contains rooms in 15 minute steps
-        return $i;
+        $indexTimestamp = $indexTime->getTimestamp() - $this->start->getTimestamp();
+
+        $now = new DateTime('now');
+        $nowPlusOffset = (clone $now)->add($this->offset);
+        $offsetTimestamp = $nowPlusOffset->getTimestamp() - $now->getTimestamp();
+
+        return $indexTimestamp / $offsetTimestamp;
     }
 }
