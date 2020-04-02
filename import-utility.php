@@ -76,15 +76,17 @@ class TimeVector
     }
 
     /**
-     * @param DateTimeInterface $indexTime time to be converted to index based on start time attribute
+     * converts a time to an index for the internal array based on the start time attribute
      * 
-     * @return int index for internal array
+     * @param DateTimeInterface $indexTime time to be converted
+     * @throws \InvalidArgumentException if given time is before start time
+     * @return int
      */
     private function timeToIndex(DateTimeInterface $indexTime) : int
     {
         // get index time as a unix timestamp and offset from the start time
         $indexTimestamp = $indexTime->getTimestamp() - $this->start->getTimestamp();
-        if ($indexTimestamp < 0) throw new Exception('invalid index'); // internal array contains no negative indices
+        if ($indexTimestamp < 0) throw new InvalidArgumentException('invalid index'); // internal array contains no negative indices
 
         // get offset interval as a unix timestamp
         $now = new DateTime('now');
