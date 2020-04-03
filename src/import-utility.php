@@ -82,7 +82,7 @@ class TimeVector
      * @throws InvalidArgumentException if given time is before start time
      * @return int
      */
-    public function timeToIndex(DateTimeInterface $indexTime) : int
+    private function timeToIndex(DateTimeInterface $indexTime) : int
     {
         if ($indexTime < $this->start || $indexTime > $this->end) // time not contained in array
             throw new InvalidArgumentException('invalid index');

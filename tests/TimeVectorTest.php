@@ -11,20 +11,20 @@ class TimeVectorTest extends TestCase
         $start = new DateTime("today 08:00:00");
         $end = new DateTime("today 09:00:00");
         $offset = new DateInterval('PT15M');
-        $this->testTimeVector = new TimeVector($start, $end, $offset, []);
+        $this->testTimeVector = new TimeVector($start, $end, $offset, ['test']);
     }
 
-    public function testCanCreateIndexFromValidTime() : void
+    public function testCanGetFromValidIndex() : void
     {
         $this->assertEquals(
-            2,
-            $this->testTimeVector->timeToIndex(new DateTime("today 08:30:00"))
+            'test',
+            $this->testTimeVector->get(new DateTime("today 08:30:00"))
         );
     }
 
-    public function testCannotCreateIndexFromInvalidTime() : void
+    public function testCannotGetFromInvalidIndex() : void
     {
         $this->expectException(InvalidArgumentException::class);
-        $this->testTimeVector->timeToIndex(new DateTime("today 07:30:00"));
+        $this->testTimeVector->get(new DateTime("today 07:30:00"));
     }
 }
