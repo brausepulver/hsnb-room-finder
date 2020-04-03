@@ -109,7 +109,7 @@ class Importer
 
 // test
 $start = new DateTime("today 08:00:00");
-$end = new DateTime("today 10:00:00");
+$end = new DateTime("tomorrow 10:00:00");
 
 $rooms = Importer::query($start, $end);
 echo "done";
