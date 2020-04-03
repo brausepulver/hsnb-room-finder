@@ -53,9 +53,16 @@ class Importer
                         continue;
                     }
 
+                    if ($event->end < $times->start || $event->start > $times->end) {
+                        continue;
+                    }
                     $eventTime = clone $event->start;
                     while ($eventTime < $event->end) {
-                        $times->remove($eventTime, $roomId);
+                        try {
+                            $times->remove($eventTime, $roomId);
+                        } catch (Exception $e) {
+                            break;
+                        }
                         $eventTime->add($times->offset);
                     }
                 }
@@ -105,3 +112,4 @@ $start = new DateTime("today 08:00:00");
 $end = new DateTime("today 10:00:00");
 
 $rooms = Importer::query($start, $end);
+echo "done";
