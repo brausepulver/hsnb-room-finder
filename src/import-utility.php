@@ -84,9 +84,11 @@ class TimeVector
      */
     public function timeToIndex(DateTimeInterface $indexTime) : int
     {
+        if ($indexTime < $this->start || $indexTime > $this->end) // time not contained in array
+            throw new InvalidArgumentException('invalid index');
+
         // get index time as a unix timestamp and offset from the start time
         $indexTimestamp = $indexTime->getTimestamp() - $this->start->getTimestamp();
-        if ($indexTimestamp < 0) throw new InvalidArgumentException('invalid index'); // internal array contains no negative indices
 
         // get offset interval as a unix timestamp
         $now = new DateTime('now');
