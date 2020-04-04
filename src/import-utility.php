@@ -17,6 +17,11 @@ class Room
     public $shortName;
     public $name;
 
+    public $type;
+    public $size;
+    public $number;
+    public $building;
+
     public function __construct($json)
     {
         $this->id = $json['id'];
