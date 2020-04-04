@@ -27,7 +27,7 @@ class TimeVector
         $times = [];
         $start = clone $this->start;
 
-        while ($start <= $this->end) {
+        while ($start < $this->end) {
             $times[] = $default;
             $start->add($offset);
         }

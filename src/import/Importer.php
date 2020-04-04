@@ -30,9 +30,8 @@ class Importer
         $data = [
             'dvon' => $start->format('Y-m-d'),
             'dbis' => $end->format('Y-m-d'),
-            // these options return less rooms => do not use?
-            // 'zvon' => $start->format('H:i:s'),
-            // 'zbis' => $end->format('H:i:s')
+            'zvon' => $start->format('H:i:s'),
+            'zbis' => $end->format('H:i:s')
         ];
         $query = $url . "&" . http_build_query($data);
 
