@@ -22,8 +22,8 @@ class Importer
 
     public static function query(\DateTimeInterface $start, \DateTimeInterface $end) : TimeVector
     {
-        // get configuration options from ini file
-        $options = json_decode(file_get_contents(self::$CONFIG_PATH), true)['Importer'];
+        // get configuration options from config file
+        $options = json_decode(file_get_contents(self::$CONFIG_PATH), $assoc = true)['Importer'];
 
         // build query
         $url = $options['calendar_base'];
@@ -36,8 +36,7 @@ class Importer
         $query = $url . "&" . http_build_query($data);
 
         // get response and decode as json
-        $response = file_get_contents($query);
-        $json = json_decode($response, true);
+        $json = json_decode(file_get_contents($query), $assoc = true);
 
         $importer = new Importer($json, $start, $end, $options);
 
@@ -83,8 +82,7 @@ class Importer
     private function getRooms() : array
     {
         $url = $this->options['rooms_base'];
-        $response = file_get_contents($url);
-        $json = json_decode($response, true);
+        $json = json_decode(file_get_contents($url), $assoc = true);
 
         $rooms = [];
         foreach ($json as $roomJson) {

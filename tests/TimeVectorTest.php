@@ -8,8 +8,8 @@ class TimeVectorTest extends TestCase
 
     public function setUp() : void
     {
-        $start = new DateTime("today + 2 days 08:00:00");
-        $end = new DateTime("today + 2 days 09:00:00");
+        $start = new DateTime("today 08:00:00");
+        $end = new DateTime("today 09:00:00");
         $offset = new DateInterval('PT15M');
         $this->testTimeVector = new TimeVector($start, $end, $offset, ['test']);
     }
