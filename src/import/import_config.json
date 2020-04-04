@@ -1,0 +1,6 @@
+{
+    "Importer": {
+        "calendar_base": "https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Termin&seite=plandaten",
+        "rooms_base": "https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Veranstaltungsort&seite=datenliste"
+    }
+}

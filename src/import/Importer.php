@@ -5,21 +5,28 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer 
 {
+    public static $CONFIG_PATH = 'src/import/import_config.json';
+
     private $json;
     private $start;
     private $end;
+    private $options;
 
-    private function __construct(array $json, \DateTimeInterface $start, \DateTimeInterface $end)
+    private function __construct(array $json, \DateTimeInterface $start, \DateTimeInterface $end, array $options)
     {
         $this->json = $json;
         $this->start = $start;
         $this->end = $end;
+        $this->options = $options;
     }
 
     public static function query(\DateTimeInterface $start, \DateTimeInterface $end) : TimeVector
     {
+        // get configuration options from ini file
+        $options = json_decode(file_get_contents(self::$CONFIG_PATH), true)['Importer'];
+
         // build query
-        $url = 'https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Termin&seite=plandaten';
+        $url = $options['calendar_base'];
         $data = [
             'dvon' => $start->format('Y-m-d'),
             'dbis' => $end->format('Y-m-d'),
@@ -33,7 +40,7 @@ class Importer
         $response = file_get_contents($query);
         $json = json_decode($response, true);
 
-        $importer = new Importer($json, $start, $end);
+        $importer = new Importer($json, $start, $end, $options);
 
         // initialize the time vector with all possible rooms for every index
         $rooms = $importer->getRooms();
@@ -62,7 +69,7 @@ class Importer
                     while ($eventTime < $event->end) {
                         try {
                             $times->remove($eventTime, $roomId);
-                        } catch (Exception $e) {
+                        } catch (\InvalidArgumentException $e) {
                             break;
                         }
                         $eventTime->add($times->offset);
@@ -76,7 +83,7 @@ class Importer
 
     private function getRooms() : array
     {
-        $url = 'https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Veranstaltungsort&seite=datenliste';
+        $url = $this->options['rooms_base'];
         $response = file_get_contents($url);
         $json = json_decode($response, true);
 
@@ -110,8 +117,8 @@ class Importer
         $eventEnd = $eventJson['ende'];
 
         $format = 'Y-m-d H:i:s';
-        $eventStartDateTime = DateTime::createFromFormat($format, $eventDate . ' ' . $eventStart);
-        $eventEndDateTime = DateTime::createFromFormat($format, $eventDate . ' ' . $eventEnd);
+        $eventStartDateTime = \DateTime::createFromFormat($format, $eventDate . ' ' . $eventStart);
+        $eventEndDateTime = \DateTime::createFromFormat($format, $eventDate . ' ' . $eventEnd);
 
         return new Event($eventStartDateTime, $eventEndDateTime);
     }
