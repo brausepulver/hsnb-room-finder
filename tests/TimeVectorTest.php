@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 use PHPUnit\Framework\TestCase;
-require_once('./src/import/utility/TimeVector.php'); // do this using namespaces?
+use Import\Utility\TimeVector;
 
 class TimeVectorTest extends TestCase
 {

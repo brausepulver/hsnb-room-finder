@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
-require_once('./utility/Event.php');
-require_once('./utility/Room.php');
-require_once('./utility/TimeVector.php');
+namespace Import;
+
+use Import\Utility\{Event, Room, TimeVector};
 
 class Importer 
 {
@@ -9,14 +9,14 @@ class Importer
     private $start;
     private $end;
 
-    private function __construct(array $json, DateTimeInterface $start, DateTimeInterface $end)
+    private function __construct(array $json, \DateTimeInterface $start, \DateTimeInterface $end)
     {
         $this->json = $json;
         $this->start = $start;
         $this->end = $end;
     }
 
-    public static function query(DateTimeInterface $start, DateTimeInterface $end) : TimeVector
+    public static function query(\DateTimeInterface $start, \DateTimeInterface $end) : TimeVector
     {
         // build query
         $url = 'https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Termin&seite=plandaten';
@@ -37,7 +37,7 @@ class Importer
 
         // initialize the time vector with all possible rooms for every index
         $rooms = $importer->getRooms();
-        $times = new TimeVector($importer->start, $importer->end, new DateInterval('PT15M'), $rooms);
+        $times = new TimeVector($importer->start, $importer->end, new \DateInterval('PT15M'), $rooms);
 
         // get events and remove rooms at those times
         $weekCounter = clone $importer->start;
@@ -69,7 +69,7 @@ class Importer
                     }
                 }
             }
-            $weekCounter->add(new DateInterval('P7D'));
+            $weekCounter->add(new \DateInterval('P7D'));
         }
         return $times;
     }
@@ -77,7 +77,7 @@ class Importer
     private function getRooms() : array
     {
         $rooms = [];
-        foreach ($this->json['veranstaltungsorte'] as $roomJson) {
+        foreach ($this->json['veranstaltungsorte'] as $roomJson) { // exception handling when index null
             $rooms[] = new Room($roomJson);
         }
         return $rooms;
