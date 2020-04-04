@@ -1,5 +1,7 @@
 <?php declare(strict_types=1);
-require_once('./import-utility.php');
+require_once('./utility/Event.php');
+require_once('./utility/Room.php');
+require_once('./utility/TimeVector.php');
 
 class Importer 
 {
@@ -110,10 +112,3 @@ class Importer
         return new Event($eventStartDateTime, $eventEndDateTime);
     }
 }
-
-// test
-$start = new DateTime("today 08:00:00");
-$end = new DateTime("tomorrow + 7 days 10:00:00");
-
-$times = Importer::query($start, $end);
-print_r($times);
