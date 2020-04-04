@@ -76,8 +76,12 @@ class Importer
 
     private function getRooms() : array
     {
+        $url = 'https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Veranstaltungsort&seite=datenliste';
+        $response = file_get_contents($url);
+        $json = json_decode($response, true);
+
         $rooms = [];
-        foreach ($this->json['veranstaltungsorte'] as $roomJson) { // exception handling when index null
+        foreach ($json as $roomJson) {
             $rooms[] = new Room($roomJson);
         }
         return $rooms;

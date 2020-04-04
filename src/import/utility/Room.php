@@ -4,6 +4,7 @@ namespace Import\Utility;
 class Room
 {
     public $id;
+    public $id2;
     public $shortName;
     public $name;
 
@@ -15,6 +16,7 @@ class Room
     public function __construct($json)
     {
         $this->id = $json['id'];
+        $this->id2 = $json['id2'];
         $this->shortName = $json['kurzname'];
         $this->name = $json['name'];
     }
