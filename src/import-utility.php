@@ -66,13 +66,18 @@ class TimeVector
     public function get(DateTimeInterface $indexTime)
     {
         $i = $this->timeToIndex($indexTime);
-        return $this->timeArray[$i]; // error handling
+        return $this->times[$i];
     }
 
     public function remove(DateTimeInterface $indexTime, $elementId)
     {
         $i = $this->timeToIndex($indexTime);
-        unset($this->times[$i][$elementId]); // error handling
+        unset($this->times[$i][$elementId]);
+    }
+
+    public function getAll() : array
+    {
+        return $this->times;
     }
 
     /**

@@ -18,7 +18,7 @@ class TimeVectorTest extends TestCase
     {
         $this->assertEquals(
             'test',
-            $this->testTimeVector->get(new DateTime("today 08:30:00"))
+            $this->testTimeVector->get(new DateTime("today 08:30:00"))[0]
         );
     }
 
