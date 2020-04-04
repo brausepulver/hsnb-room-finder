@@ -74,7 +74,11 @@ class Importer
 
     private function getRooms() : array
     {
-        return $this->json['veranstaltungsorte'];
+        $rooms = [];
+        foreach ($this->json['veranstaltungsorte'] as $roomJson) {
+            $rooms[] = new Room($roomJson);
+        }
+        return $rooms;
     }
 
     private function getDays(string $week) : array
@@ -109,7 +113,7 @@ class Importer
 
 // test
 $start = new DateTime("today 08:00:00");
-$end = new DateTime("today 10:00:00");
+$end = new DateTime("tomorrow + 7 days 10:00:00");
 
-$rooms = Importer::query($start, $end);
-echo "done";
+$times = Importer::query($start, $end);
+print_r($times);
