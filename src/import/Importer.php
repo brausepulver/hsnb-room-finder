@@ -120,13 +120,3 @@ class Importer
         return new Event($eventStartDateTime, $eventEndDateTime);
     }
 }
-<<<<<<< HEAD:src/import/Importer.php
-=======
-
-// test
-$start = new DateTime("today 08:00:00");
-$end = new DateTime("tomorrow 10:00:00");
-
-$rooms = Importer::query($start, $end);
-echo "done";
->>>>>>> Flo:src/import.php
