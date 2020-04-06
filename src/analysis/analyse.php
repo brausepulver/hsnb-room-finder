@@ -13,18 +13,30 @@ use Import\Importer\{Event, Room, TimeVector};
 $start = new DateTime("Monday next week 08:00:00");
 $end = new DateTime("Monday next week 10:00:00");
 
-$timevector = Importer::query($start, $end);
+function getRoomsperDay(DateTime $start, DateTime $end){
 
-//eine methode -> analyse für einen tag
-//schauen wie viele Tage -> methode so oft durchführen
+    $timevector = Importer::query($start, $end);
 
-// $minTime = 60 -> 4 mal
-
-$times = $timevector->getAll();
-print_r($times[0][4]->id2);
-
-for($i = 0; $i < count($times); $i++){
+    //eine methode -> analyse für einen tag
+    //schauen wie viele Tage -> methode so oft durchführen
     
-
+    // $minTime = 60 -> 4 mal
+    
+    $times = $timevector->getAll();
+    // print_r($times[0][4]->id2);
+    for($i = 0; $i < count($times); $i++){
+        $times[$i];                         //Uhrzeit [0]=8:00
+        $arrayID;
+        for($j = 0; $j < count($times[$i]); $j++){
+            $arrayID[$i][$j] = $times[$i][$j]->id2;
+        }
+        print_r($arrayID[$i]);
+    }
 
 }
+
+getRoomsperDay($start, $end);
+
+
+
+
