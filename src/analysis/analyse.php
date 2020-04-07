@@ -10,10 +10,12 @@ use Import\Importer\{Event, Room, TimeVector};
 
 // $load = spl_autoload("Importer.php");
 
+//later values GUI interaction
 $start = new DateTime("Monday next week 08:00:00");
 $end = new DateTime("Monday next week 10:00:00");
+$minTime = 60;
 
-function getRoomsperDay(DateTime $start, DateTime $end){
+function getIDarray(DateTime $start, DateTime $end){
 
     $timevector = Importer::query($start, $end);
 
@@ -24,19 +26,23 @@ function getRoomsperDay(DateTime $start, DateTime $end){
     
     $times = $timevector->getAll();
     // print_r($times[0][4]->id2);
+    $arrayID;
     for($i = 0; $i < count($times); $i++){
         $times[$i];                         //Uhrzeit [0]=8:00
-        $arrayID;
         for($j = 0; $j < count($times[$i]); $j++){
             $arrayID[$i][$j] = $times[$i][$j]->id2;
         }
-        print_r($arrayID[$i]);
+        // asort($arrayID[$i]);
+        // print_r($arrayID[$i]);
     }
-
+    print_r($arrayID);
 }
 
-getRoomsperDay($start, $end);
+getIDarray($start, $end);
 
 
+ function minTimeLength(int $minTime) : int{
+    return $minTime / 15;
+}
 
 
