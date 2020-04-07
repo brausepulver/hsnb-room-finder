@@ -1,11 +1,14 @@
 <?php declare(strict_types=1);
 namespace Import;
 
+require_once(__DIR__ . '/Utility/Event.php');
+require_once(__DIR__ . '/Utility/Room.php');
+require_once(__DIR__ . '/Utility/TimeVector.php');
 use Import\Utility\{Event, Room, TimeVector};
 
 class Importer 
 {
-    public static $CONFIG_PATH = 'src/import/import_config.json';
+    public static $CONFIG_PATH = __DIR__ . '/import_config.json';
 
     private $json;
     private $start;
