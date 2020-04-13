@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-require_once "../Import/Importer.php";
+require_once(__DIR__ . '/../Import/Importer.php');
 
 use Import\Importer;
 use Import\Importer\{Event, Room, TimeVector};
