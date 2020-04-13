@@ -32,7 +32,7 @@ function getIDarray(DateTime $start, DateTime $end){
     for($i = 0; $i < count($times); $i++){
         $times[$i];                         
         for($j = 0; $j < count($times[$i]); $j++){
-            $timeID[$i][$j] = $times[$i][$j]->id2;
+            $timeID[$i][$j] = $times[$i][$j]->id;
         }
 
     }
@@ -83,7 +83,7 @@ function convertID(array $timeID, array $uniqueID) : array {
 
 //checks availabilty based on minTime and the converted ID array (output convertID())
 function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
-    $mind = minTimeLength($minTime);
+    $mind = $minTime;
     $output = array();
     for($i = 0; $i < count($convertedID); $i++){
         $count = 0;
@@ -91,24 +91,23 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
         for($j = 0; $j < count($convertedID[$i]); $j++){
             if ($convertedID[$i][$j] == 1) {
                 $count++;
-                if ($j == count($convertedID[$i])-1) {
+                if ($count >= $mind && $j == count($convertedID[$i])-1) {
                     $free->id = $uniqueID[$i];
                     $free->start = $j - ($count-1);
                     $free->end = $j;
+                    $output[$i] = $free;
                     $count = 0;
-                    continue;
                 }
             } else {
                 if($count >= $mind){
                     $free->id = $uniqueID[$i]; //because convertedID and uniqueID have same structure
                     $free->start = $j - $count;
-                    $free->end = $j - 1;
+                    $free->end = $j;
+                    $output[$i] = $free;
                 }
                 $count = 0;
-                continue;
             }
         }
-        $output[$i] = $free;
     }
     return $output;
     echo 'done2';
@@ -118,8 +117,8 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 
 //Test
 //later values GUI interaction
-$start = new DateTime("Wednesday next week 8:00:00");
-$end = new DateTime("Wednesday next week 10:00:00");
+$start = new DateTime("Monday next week 10:00:00");
+$end = new DateTime("Monday next week 14:00:00");
 $minTime = minTimeLength(60);
 
 //overall problems may caused by empty room objects(veranstaltungsort missing)
@@ -133,4 +132,3 @@ foreach ($freerooms as $room) {
     }
 }
 print_r($freerooms);
-
