@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-require_once "../Import/Importer.php";
+require_once(__DIR__ . '/../Import/Importer.php');
 
 use Import\Importer;
 use Import\Importer\{Event, Room, TimeVector};
@@ -89,23 +89,15 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
         $count = 0;
         $free = new FreeRooms();
         for($j = 0; $j < count($convertedID[$i]); $j++){
-            if ($convertedID[$i][$j] == 1) {
-                $count++;
-                if ($count >= $mind && $j == count($convertedID[$i])-1) {
-                    $free->id = $uniqueID[$i];
-                    $free->start = $j - ($count-1);
-                    $free->end = $j;
-                    $output[$i] = $free;
-                    $count = 0;
-                }
-            } else {
-                if($count >= $mind){
-                    $free->id = $uniqueID[$i]; //because convertedID and uniqueID have same structure
-                    $free->start = $j - $count;
-                    $free->end = $j;
-                    $output[$i] = $free;
-                }
+            if ($count >= $mind) {
+                $free->id = $uniqueID[$i];
+                $free->start = $j - $count;
+                $free->end = $j;
+                $output[$i] = $free;
+                $free = new FreeRooms();
                 $count = 0;
+            } else if ($convertedID[$i][$j] === 1) {
+                $count++;
             }
         }
     }
@@ -127,8 +119,9 @@ $uniqueID = getUnique1D($timeID);//check
 $convertedID = convertID($timeID, $uniqueID);//check
 $freerooms = checkTime($minTime, $uniqueID, $convertedID);//problem
 foreach ($freerooms as $room) {
-    if ($room->start != 0 && $room->end != 7) {
+    if ($room->start != 0) {
         print_r($room);
     }
 }
-print_r($freerooms);
+// print_r($freerooms);
+
