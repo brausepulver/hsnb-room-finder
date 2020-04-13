@@ -74,7 +74,7 @@ class Importer
                         try {
                             $times->remove($eventTime, $roomId);
                         } catch (\InvalidArgumentException $e) {
-                            break;
+                            ;
                         }
                         $eventTime->add($times->offset);
                     }
@@ -92,7 +92,7 @@ class Importer
 
         $rooms = [];
         foreach ($json as $roomJson) {
-            $rooms[] = new Room($roomJson);
+            $rooms[$roomJson['id']] = new Room($roomJson);
         }
         return $rooms;
     }
