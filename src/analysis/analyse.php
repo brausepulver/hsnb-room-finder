@@ -94,7 +94,8 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
                 $free->start = $j - $count;
                 $free->end = $j;
                 $output[$i] = $free;
-                break;
+                $free = new FreeRooms();
+                $count = 0;
             } else if ($convertedID[$i][$j] === 1) {
                 $count++;
             }
