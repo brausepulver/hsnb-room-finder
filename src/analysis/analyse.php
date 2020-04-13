@@ -1,29 +1,22 @@
 <?php declare(strict_types=1);
 
 require_once "../Import/Importer.php";
-require_once "../Import/utility/Event.php";
-require_once "../Import/utility/Room.php";
-require_once "../Import/utility/TimeVector.php";
 
-// use Import\Importer;
-// use Import\Importer\{Event, Room, TimeVector};
-
-require_once('../Import/Importer.php');
 use Import\Importer;
-
+use Import\Importer\{Event, Room, TimeVector};
 
 class FreeRooms{
 
-     private $id;
-     private $start;
-     private $end;
+     public $id;
+     public $start;
+     public $end;
 
-     private function __construct(int $id, int $start, int $end){
+    //  private function __construct(int $id, int $start, int $end){
 
-        $this->$id = $id;
-        $this->start = $start;
-        $this->end = $end; 
-    }
+    //     $this->$id = $id;
+    //     $this->start = $start;
+    //     $this->end = $end; 
+    // }
 
 
 }
@@ -95,18 +88,24 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
     for($i = 0; $i < count($convertedID); $i++){
         $count = 0;
         $free = new FreeRooms();
-        for($j = 0; $j < count($convertedID[$i]); $i++){
-            if($convertedID[$i][$j] == 1){
+        for($j = 0; $j < count($convertedID[$i]); $j++){
+            if ($convertedID[$i][$j] == 1) {
                 $count++;
-            }else{
-                if($count >= $mind){
-                    $free->id = $uniqueID[$i]; //because convertedID and uniqueID have same structure
-                    $free->$start = $j - $count;
-                    $free->$end = $j - 1;
-                }else{
+                if ($j == count($convertedID[$i])-1) {
+                    $free->id = $uniqueID[$i];
+                    $free->start = $j - ($count-1);
+                    $free->end = $j;
                     $count = 0;
                     continue;
                 }
+            } else {
+                if($count >= $mind){
+                    $free->id = $uniqueID[$i]; //because convertedID and uniqueID have same structure
+                    $free->start = $j - $count;
+                    $free->end = $j - 1;
+                }
+                $count = 0;
+                continue;
             }
         }
         $output[$i] = $free;
@@ -128,5 +127,10 @@ $timeID = getIDarray($start, $end);//check
 $uniqueID = getUnique1D($timeID);//check
 $convertedID = convertID($timeID, $uniqueID);//check
 $freerooms = checkTime($minTime, $uniqueID, $convertedID);//problem
-// print_r($freerooms);
+foreach ($freerooms as $room) {
+    if ($room->start != 0 && $room->end != 7) {
+        print_r($room);
+    }
+}
+print_r($freerooms);
 
