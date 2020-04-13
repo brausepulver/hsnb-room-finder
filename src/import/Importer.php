@@ -62,7 +62,7 @@ class Importer
                     $eventId = $eventInfo['id'];
                     try {
                         $event = $importer->makeEvent($eventId);
-                    } catch (Exception $e) {
+                    } catch (\Exception $e) {
                         continue;
                     }
 
@@ -113,7 +113,7 @@ class Importer
     private function makeEvent(string $eventId) : Event
     {
         $eventJson = $this->json['termine'][$eventId]; // exception handling
-        if (count($eventJson) == 0) throw new Exception("event json empty"); // temporary
+        if (count($eventJson) == 0) throw new \Exception("event json empty"); // temporary
         
         $eventDate = $eventJson['datum'];
         $eventStart = $eventJson['beginn'];
