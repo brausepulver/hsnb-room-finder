@@ -8,7 +8,8 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer 
 {
-    public static $CONFIG_PATH = __DIR__ . '/import_config.json';
+    public static $CONFIG_PATH = __DIR__ . '/config.json';
+    public static $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
 
     private $json;
     private $start;
@@ -23,20 +24,22 @@ class Importer
         $this->options = $options;
     }
 
-    public static function query(\DateTimeInterface $start, \DateTimeInterface $end) : TimeVector
+    public static function query(\DateTimeInterface $start, \DateTimeInterface $end, bool $debug = false) : TimeVector
     {
         // get configuration options from config file
-        $options = json_decode(file_get_contents(self::$CONFIG_PATH), $assoc = true)['Importer'];
+        $config = ($debug ? self::$DEBUG_CONFIG_PATH : self::$CONFIG_PATH);
+        $options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
 
         // build query
         $url = $options['calendar_base'];
+        echo realpath($url);
         $data = [
             'dvon' => $start->format('Y-m-d'),
             'dbis' => $end->format('Y-m-d'),
             'zvon' => $start->format('H:i:s'),
             'zbis' => $end->format('H:i:s')
         ];
-        $query = $url . "&" . http_build_query($data);
+        $query = ($debug ? $url : $url . "&" . http_build_query($data)); // no parameters are used for debugging
 
         // get response and decode as json
         $json = json_decode(file_get_contents($query), $assoc = true);

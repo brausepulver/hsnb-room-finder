@@ -1,0 +1,6 @@
+{
+    "Importer": {
+        "calendar_base": "./tests/test_calendar_response.json",
+        "rooms_base": "./tests/test_rooms_response.json"
+    }
+}
