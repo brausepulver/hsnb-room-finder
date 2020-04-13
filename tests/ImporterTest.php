@@ -6,8 +6,8 @@ class ImporterTest extends TestCase
 {
     public function testCanGetQueryFromValidTimes() : void
     {
-        $start = new DateTime("Monday next week 08:00:00");
-        $end = new DateTime("Monday next week 10:00:00");
+        $start = new DateTime("2020-W16-2 08:00:00");
+        $end = new DateTime("2020-W16-2 10:00:00");
 
         $times = Importer::query($start, $end, $debug = true);
         $this->assertNotEmpty(

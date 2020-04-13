@@ -1,490 +1,84 @@
 {
-    "kalender": {
-        "1442786400": {
-            "status": 1,
-            "statusSichtbar": 0,
-            "link_plan": "2015-W39",
-            "link_liste": "dts1442786400"
-        },
-        "1442872800": {
-            "status": 1,
-            "statusSichtbar": 0,
-            "link_plan": "2015-W39",
-            "link_liste": "dts1442872800"
-        },
-        "1443045600": {
-        }
-    },
     "stundenplan": {
         "kalenderwochen": {
-            "2015-W39": {
+            "2020-W16": {
                 "wochentage": {
                     "1": {
-                        "datumTs": 1442786400,
-                        "datumISO": "2015-W39-1",
+                        "datumTs": 1586728800,
                         "wochentag": 1,
-                        "termine": {
-                            "54572": {
-                                "id": "54572",
-                                "status": 1,
-                                "statusTs": 1441386601,
-                                "statusSichtbar": 0,
-                                "beginn": 36,
-                                "ende": 39,
-                                "veranstaltung": "5019",
-                                "veranstaltungsart": "4",
-                                "veranstaltungsort": "39",
-                                "studiengaenge": {
-                                    "110": true,
-                                    "111": true,
-                                    "52": true
-                                },
-                                "dozenten": {
-                                    "180": true,
-                                    "181": true,
-                                    "183": true,
-                                    "185": true,
-                                    "186": true,
-                                    "188": true,
-                                    "189": true,
-                                    "179": true,
-                                    "83": true,
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "47628",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "1"
-                                },
-                                "semester": "4"
-                            },
-                            "49840": {
-                                "id": "49840",
-                                "status": 1,
-                                "statusTs": 1439226601,
-                                "statusSichtbar": 0,
-                                "beginn": 40,
-                                "ende": 46,
-                                "veranstaltung": "4644",
-                                "veranstaltungsart": "8",
-                                "veranstaltungsort": "47",
-                                "module": {
-                                    "266": true
-                                },
-                                "studiengaenge": {
-                                    "113": true
-                                },
-                                "dozenten": {
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "42844",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "14"
-                                },
-                                "semester": "4"
-                            },
-                            "49826": {
-                                "id": "49826",
-                                "status": 2,
-                                "statusTs": 1444237801,
-                                "statusSichtbar": 0,
-                                "beginn": 50,
-                                "ende": 56,
-                                "veranstaltung": "4643",
-                                "veranstaltungsart": "12",
-                                "veranstaltungsort": "63",
-                                "module": {
-                                    "266": true
-                                },
-                                "studiengaenge": {
-                                    "113": true
-                                },
-                                "dozenten": {
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "42830",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "14"
-                                },
-                                "semester": "4"
-                            }
-                        }
+                        "termine": []
                     },
                     "2": {
-                        "datumTs": 1442872800,
-                        "datumISO": "2015-W39-2",
+                        "datumTs": 1586815200,
                         "wochentag": 2,
                         "termine": {
-                            "49854": {
-                                "id": "49854",
-                                "status": 1,
-                                "statusTs": 1439226601,
-                                "statusSichtbar": 0,
-                                "beginn": 33,
-                                "ende": 39,
-                                "veranstaltung": "4645",
-                                "veranstaltungsart": "8",
-                                "veranstaltungsort": "47",
-                                "module": {
-                                    "267": true
-                                },
-                                "studiengaenge": {
-                                    "113": true
-                                },
-                                "dozenten": {
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "42858",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "14"
-                                },
-                                "semester": "4"
+                            "1": {
+                                "id": "1",
+                                "veranstaltungsort": "11"
                             },
-                            "53658": {
-                                "id": "53658",
-                                "status": 1,
-                                "statusTs": 1439226601,
-                                "statusSichtbar": 0,
-                                "beginn": 40,
-                                "ende": 46,
-                                "veranstaltung": "4973",
-                                "veranstaltungsart": "7",
-                                "veranstaltungsort": "63",
-                                "module": {
-                                    "162": true
-                                },
-                                "studiengaenge": {
-                                    "52": true,
-                                    "116": true
-                                },
-                                "dozenten": {
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "46698",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "28"
-                                },
-                                "semester": "4"
+                            "2": {
+                                "id": "2",
+                                "veranstaltungsort": "12"
                             },
-                            "49882": {
-                                "id": "49882",
-                                "status": 1,
-                                "statusTs": 1439226601,
-                                "statusSichtbar": 0,
-                                "beginn": 50,
-                                "ende": 56,
-                                "veranstaltung": "4647",
-                                "veranstaltungsart": "8",
-                                "veranstaltungsort": "52",
-                                "module": {
-                                    "271": true
-                                },
-                                "studiengaenge": {
-                                    "173": true
-                                },
-                                "dozenten": {
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "42886",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "12"
-                                },
-                                "semester": "4"
-                            },
-                            "53672": {
-                                "id": "53672",
-                                "status": 1,
-                                "statusTs": 1439226601,
-                                "statusSichtbar": 0,
-                                "beginn": 50,
-                                "ende": 56,
-                                "veranstaltung": "4973",
-                                "veranstaltungsart": "7",
-                                "veranstaltungsort": "63",
-                                "module": {
-                                    "162": true
-                                },
-                                "studiengaenge": {
-                                    "52": true,
-                                    "116": true
-                                },
-                                "dozenten": {
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "46712",
-                                    "dozentId": "190",
-                                    "zaehler": "2",
-                                    "zaehlerMax": "28"
-                                },
-                                "semester": "4"
-                            },
-                            "49896": {
-                                "id": "49896",
-                                "status": 1,
-                                "statusTs": 1439226601,
-                                "statusSichtbar": 0,
-                                "beginn": 57,
-                                "ende": 63,
-                                "veranstaltung": "4648",
-                                "veranstaltungsart": "12",
-                                "veranstaltungsort": "50",
-                                "module": {
-                                    "271": true
-                                },
-                                "studiengaenge": {
-                                    "173": true
-                                },
-                                "dozenten": {
-                                    "189": true,
-                                    "190": true
-                                },
-                                "t2d": {
-                                    "id": "42900",
-                                    "dozentId": "190",
-                                    "zaehler": "1",
-                                    "zaehlerMax": "16"
-                                },
-                                "semester": "4"
+                            "3": {
+                                "id": "3",
+                                "veranstaltungsort": "13"
                             }
                         }
                     },
                     "3": {
+                        "datumTs": 1586901600,
+                        "wochentag": 3,
+                        "termine": []
                     },
                     "4": {
+                        "datumTs": 1586988000,
+                        "wochentag": 4,
+                        "termine": []
                     },
                     "5": {
+                        "datumTs": 1587074400,
+                        "wochentag": 5,
+                        "termine": []
                     },
                     "6": {
+                        "datumTs": 1587160800,
+                        "wochentag": 6,
+                        "termine": []
                     },
                     "7": {
+                        "datumTs": 1587247200,
+                        "wochentag": 7,
+                        "termine": []
                     }
                 },
-                "kalenderwoche": "39",
-                "kalenderwocheISO": "2015-W39",
+                "kalenderwoche": "16",
                 "_stundeBeginn": 32,
-                "_stundeEnde": 70,
+                "_stundeEnde": 80,
                 "stundeBeginn": 8,
-                "stundeEnde": 18
+                "stundeEnde": 20
             }
         },
-        "letzte_aenderung": 1444237801
+        "letzte_aenderung": 1586166603
     },
     "termine": {
-        "54572": {
-            "id": "54572",
-            "datum": "2015-09-21",
-            "beginn": "09:00:00",
-            "ende": "09:45:00",
-            "stunden": "0.00",
-            "bemerkung": null
+        "1": {
+            "id": "1",
+            "datum": "2020-04-14",
+            "beginn": "07:45:00",
+            "ende": "09:00:00"
         },
-        "49840": {
-            "id": "49840",
-            "datum": "2015-09-21",
-            "beginn": "10:00:00",
-            "ende": "11:30:00",
-            "stunden": "2.00",
-            "bemerkung": null
-        },
-        "49826": {
-        },
-        "49854": {
-        },
-        "53658": {
-        },
-        "49882": {
-        },
-        "53672": {
-        },
-        "49896": {
-        },
-        "49725": {
-        },
-        "49739": {
-        },
-        "53700": {
-        },
-        "53686": {
-        },
-        "54165": {
-        }
-    },
-    "veranstaltungen": {
-        "5019": {
-            "id": "5019",
-            "nummer": "950034",
-            "kurzname": "VXLG0034",
-            "name": "Begr\u00fc\u00dfung der Studierenden [GI, GM, GG]"
-        },
-        "4644": {
-            "id": "4644",
-            "nummer": "154201",
-            "kurzname": "VBGI4201",
-            "name": "Algorithmen und Programmierung II"
-        },
-        "4643": {
-        },
-        "4645": {
-        },
-        "4973": {
-        },
-        "4647": {
-        },
-        "4648": {
-        },
-        "4634": {
-        },
-        "4636": {
-        },
-        "4975": {
-        },
-        "4974": {
-        },
-        "4652": {
-        }
-    },
-    "veranstaltungsarten": {
-        "4": {
-            "id": "4",
-            "kurzname": "So",
-            "name": "Sonstiges"
-        },
-        "8": {
-            "id": "8",
-            "kurzname": "V",
-            "name": "Vorlesung"
-        },
-        "12": {
-        },
-        "7": {
-        },
-        "20": {
+        "2": {
+            "id": "2",
+            "datum": "2020-04-14",
+            "beginn": "08:45:00",
+            "ende": "09:30:00"
         },
         "3": {
-        }
-    },
-    "veranstaltungsorte": {
-        "39": {
-            "id": "39",
-            "kurzname": "L021109",
-            "name": "Raum 109 (Instrumentenkunde), Haus 2"
-        },
-        "47": {
-            "id": "47",
-            "kurzname": "L021106",
-            "name": "Raum 106, Haus 2"
-        },
-        "63": {
-        },
-        "52": {
-        },
-        "50": {
-        },
-        "38": {
-        }
-    },
-    "studiengaenge": {
-        "110": {
-            "id": "110",
-            "name": "Geoinformatik",
-            "kurzname": "Ba. GIF",
-            "pruefungsordnung": "2013",
-            "abschluss": "B",
-            "semester": "1"
-        },
-        "111": {
-            "id": "111",
-            "name": "Geod\u00e4sie und Messtechnik",
-            "kurzname": "Ba. GM",
-            "pruefungsordnung": "2013",
-            "abschluss": "B",
-            "semester": "1"
-        },
-        "52": {
-        },
-        "113": {
-        },
-        "116": {
-        },
-        "173": {
-        }
-    },
-    "dozenten": {
-        "180": {
-            "id": "180",
-            "vorname": "Karl",
-            "nachname": "Foppe",
-            "titel": "Dr.-Ing."
-        },
-        "181": {
-            "id": "181",
-            "vorname": "Wilhelm",
-            "nachname": "Heger",
-            "titel": "Dr.-Ing."
-        },
-        "183": {
-        },
-        "185": {
-        },
-        "186": {
-        },
-        "188": {
-        },
-        "189": {
-        },
-        "179": {
-        },
-        "83": {
-        },
-        "190": {
-        },
-        "429": {
-        }
-    },
-    "semester": {
-        "4": {
-            "id": "4",
-            "beginn": "2015-09-01",
-            "ende": "2016-02-29",
-            "vorlesungsbeginn": "2015-09-14",
-            "vorlesungsende": "2016-01-15",
-            "kurzname": "WiSe 2015\/16",
-            "name": "Wintersemester 2015\/16",
-            "stand": "2015-10-21 04:10:00"
-        }
-    },
-    "module": {
-        "266": {
-            "id": "266",
-            "kurzname": "VBGI42",
-            "name": "Algorithmen und Programmierung II (VBGI42)"
-        },
-        "267": {
-            "id": "267",
-            "kurzname": "VBGI12",
-            "name": "Datenbanken (VBGI12)"
-        },
-        "162": {
-        },
-        "271": {
-        },
-        "261": {
-        },
-        "323": {
-        },
-        "273": {
+            "id": "3",
+            "datum": "2020-04-14",
+            "beginn": "09:45:00",
+            "ende": "10:30:00"
         }
     }
 }

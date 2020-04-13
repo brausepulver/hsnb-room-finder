@@ -1,0 +1,20 @@
+{
+    "11": {
+        "id": "11",
+        "id2": "21",
+        "kurzname": "R011",
+        "name": "R 011 (Seminarraum), Haus 1"
+    },
+    "12": {
+        "id": "12",
+        "id2": "22",
+        "kurzname": "R012",
+        "name": "R 012 (Seminarraum), Haus 2"
+    },
+    "13": {
+        "id": "13",
+        "id2": "23",
+        "kurzname": "R013",
+        "name": "R 013 (Seminarraum), Haus 3"
+    }
+}
