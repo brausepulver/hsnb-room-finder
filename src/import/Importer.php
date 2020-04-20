@@ -6,7 +6,7 @@ require_once(__DIR__ . '/Utility/Room.php');
 require_once(__DIR__ . '/Utility/TimeVector.php');
 use Import\Utility\{Event, Room, TimeVector};
 
-class Importer 
+class Importer
 {
     public static $CONFIG_PATH = __DIR__ . '/config.json';
     public static $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
@@ -39,7 +39,7 @@ class Importer
             'zvon' => $start->format('H:i:s'),
             'zbis' => $end->format('H:i:s')
         ];
-        $query = ($debug ? $url : $url . "&" . http_build_query($data)); // no parameters are used for debugging
+        $query = ($debug ? __DIR__ . "/$url" : $url . "&" . http_build_query($data)); // no parameters are used for debugging
 
         // get response and decode as json
         $json = json_decode(file_get_contents($query), $assoc = true);
@@ -114,7 +114,7 @@ class Importer
     {
         $eventJson = $this->json['termine'][$eventId]; // exception handling
         if (count($eventJson) == 0) throw new \Exception("event json empty"); // temporary
-        
+
         $eventDate = $eventJson['datum'];
         $eventStart = $eventJson['beginn'];
         $eventEnd = $eventJson['ende'];
