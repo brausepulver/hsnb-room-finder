@@ -32,7 +32,6 @@ class Importer
 
         // build query
         $url = $options['calendar_base'];
-        echo realpath($url);
         $data = [
             'dvon' => $start->format('Y-m-d'),
             'dbis' => $end->format('Y-m-d'),
