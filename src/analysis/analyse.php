@@ -8,15 +8,15 @@ use Import\Importer\{Event, Room, TimeVector};
 class FreeRooms{
 
      public $id;
-     public $start;
-     public $end;
+    //  public $start;
+    //  public $end;
+     public $free;
 
-    //  private function __construct(int $id, int $start, int $end){
+     public function __construct(){
 
-    //     $this->$id = $id;
-    //     $this->start = $start;
-    //     $this->end = $end; 
-    // }
+        $this->free = [];
+        
+    }
 
 
 }
@@ -25,18 +25,17 @@ class FreeRooms{
 //gets time interval
 //puts every room id2 in an array
 function getIDarray(DateTime $start, DateTime $end){
-    $timevector = Importer::query($start, $end);
+    $timevector = Importer::query($start, $end, true);
  
     $times = $timevector->getAll();
-    $timeID;
+    $timeID = [];
     for($i = 0; $i < count($times); $i++){
-        $times[$i];                         
-        for($j = 0; $j < count($times[$i]); $j++){
-            $timeID[$i][$j] = $times[$i][$j]->id2;
+        $timeID[$i] = [];
+        foreach ($times[$i] as $room){
+            $timeID[$i][] = $room->id;
         }
 
     }
-    echo 'done';
     return $timeID;
 }
 
@@ -57,7 +56,11 @@ function getUnique1D(array $input) : array {
             $output[] = $input[$i][$j];
         }
     }
-    $unique = array_unique($output);                //maybe problem bc of array_unique
+    $tmp = array_unique($output);                //maybe problem bc of array_unique
+    $unique = [];
+    foreach($tmp as $r){
+        $unique[] = $r;
+    }
     return $unique;
 }
 
@@ -88,40 +91,52 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
     for($i = 0; $i < count($convertedID); $i++){
         $count = 0;
         $free = new FreeRooms();
-        for($j = 0; $j < count($convertedID[$i]); $j++){
-            if ($count >= $mind) {
-                $free->id = $uniqueID[$i];
-                $free->start = $j - $count;
-                $free->end = $j;
-                $output[$i] = $free;
-                $free = new FreeRooms();
-                $count = 0;
+        if(!in_array(0, $convertedID[$i])){
+            $free->id = $uniqueID[$i];
+            $free->free[0][0] = 0;
+            $free->free[0][1] = count($convertedID[$i]);
+            $output[$i] = $free;
+        }else{
+            $temp = 0;
+            for($j = 0; $j < count($convertedID[$i]); $j++){
+                if ($count >= $mind && ($convertedID[$i][$j] === 0 || $j === count($convertedID[$i])-1)) {
+                    $free->id = $uniqueID[$i];
+                    $free->free[$temp][0] = $j - $count;
+                    $free->free[$temp][1] = $j;
+                    $output[$i] = $free;
+                    $temp++;
+                    // $free = new FreeRooms();
+                     $count = 0;
             } else if ($convertedID[$i][$j] === 1) {
                 $count++;
+                }
             }
         }
     }
     return $output;
-    echo 'done2';
 }
 
 
 
 //Test
 //later values GUI interaction
-$start = new DateTime("Monday next week 10:00:00");
-$end = new DateTime("Monday next week 14:00:00");
-$minTime = minTimeLength(60);
+$start = new DateTime("2020-W16-2 08:00:00");
+$end = new DateTime("2020-W16-2 12:00:00");
+$minTime = minTimeLength(30);
 
 //overall problems may caused by empty room objects(veranstaltungsort missing)
 $timeID = getIDarray($start, $end);//check  
 $uniqueID = getUnique1D($timeID);//check
 $convertedID = convertID($timeID, $uniqueID);//check
 $freerooms = checkTime($minTime, $uniqueID, $convertedID);//problem
-foreach ($freerooms as $room) {
-    if ($room->start != 0) {
-        print_r($room);
-    }
-}
+// foreach ($freerooms as $room) {
+//     if ($room->start != 0) {
+//         print_r($room);
+//     }
+// }
 // print_r($freerooms);
+
+$out = print_r($freerooms, true);
+str_replace('\n', '<br>', $out);
+echo $out;
 
