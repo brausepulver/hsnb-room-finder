@@ -84,14 +84,33 @@ class Importer
         return $times;
     }
 
+    /**
+     * get all available rooms that could be occupied by events
+     * 
+     * @return array of Room objects
+     */
     private function getRooms() : array
     {
+        // base url where room data is located
         $url = $this->options['rooms_base'];
-        $json = json_decode(file_get_contents($url), $assoc = true);
 
+        // try to retrieve room data from url and decode as json
+        if ($string = file_get_contents($url)) { // returns true on success
+            $json = json_decode($string, $assoc = true); // returns NULL if json cannot be decoded or data is deeper than recursion limit
+            if (is_null($json)) throw new \Exception('String with room data could not be decoded as JSON.');
+        } else {
+            throw new \Exception("String with room data could not be acquired from $url.");
+        }
+
+        // make array of Room objects out of json
         $rooms = [];
         foreach ($json as $roomJson) {
-            $rooms[$roomJson['id']] = new Room($roomJson);
+            try {
+                $roomID = $roomJson['id'];
+            } catch (\OutOfBoundsException $e) {
+                throw new \Exception('ID property of room could not be found in JSON.');
+            }
+            $rooms[$roomID] = new Room($roomJson); // exception handling in constructor
         }
         return $rooms;
     }
