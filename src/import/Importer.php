@@ -86,10 +86,9 @@ class Importer
 
     /**
      * get all available rooms that could be occupied by events
-     * 
      * @return array of Room objects
      */
-    private function getRooms() : array
+    public function getRooms() : array
     {
         // base url where room data is located
         $url = $this->options['rooms_base'];
