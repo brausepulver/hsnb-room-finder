@@ -8,8 +8,8 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer
 {
-    public static $CONFIG_PATH = __DIR__ . '/config.json';
-    public static $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
+    public $CONFIG_PATH;
+    public $DEBUG_CONFIG_PATH;
 
     private $json;
     private $start;
