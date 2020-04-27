@@ -8,6 +8,8 @@ use Import\Importer\{Event, Room, TimeVector};
 class FreeRooms{
 
      public $id;
+     public $building;
+     public $number;
     //  public $start;
     //  public $end;
      public $free;
@@ -21,18 +23,22 @@ class FreeRooms{
 
 }
 
+$roomdata = [];
+
+
 
 //gets time interval
-//puts every room id2 in an array
-function getIDarray(DateTime $start, DateTime $end){
-    $timevector = Importer::query($start, $end, true);
- 
+//puts every room id in an array
+function getIDarray(Importer $importer){
+    $timevector = $importer->query($start, $end, true);
+    
     $times = $timevector->getAll();
     $timeID = [];
     for($i = 0; $i < count($times); $i++){
         $timeID[$i] = [];
         foreach ($times[$i] as $room){
             $timeID[$i][] = $room->id;
+
         }
 
     }
@@ -125,10 +131,12 @@ $end = new DateTime("2020-W16-2 12:00:00");
 $minTime = minTimeLength(30);
 
 //overall problems may caused by empty room objects(veranstaltungsort missing)
-$timeID = getIDarray($start, $end);//check  
+$importer = new Importer($start, $end, true);
+
+$timeID = getIDarray($importer);//check  
 $uniqueID = getUnique1D($timeID);//check
 $convertedID = convertID($timeID, $uniqueID);//check
-$freerooms = checkTime($minTime, $uniqueID, $convertedID);//problem
+$freerooms = checkTime($minTime, $uniqueID, $convertedID);
 // foreach ($freerooms as $room) {
 //     if ($room->start != 0) {
 //         print_r($room);
@@ -136,7 +144,56 @@ $freerooms = checkTime($minTime, $uniqueID, $convertedID);//problem
 // }
 // print_r($freerooms);
 
-$out = print_r($freerooms, true);
-str_replace('\n', '<br>', $out);
-echo $out;
+// $out = print_r($freerooms, true);
+// str_replace('\n', '<br>', $out);
+// echo $out;
+
+
+
+
+
+
+
+$name = 'L022017.2';
+// L = Kategorie (hier Ort)
+// 0 = 0
+// 2 = Haus
+// 1 = Gebäudeteil
+// 304 = Raumnummer (erste Ziffer kann als Etage interpretiert werden)
+// Es gibt auch "geteilte" Räume, wie Hörsaal 4 und 5 (L022017.2 und L022017.1).
+
+// updateFreeRoom($freerooms);
+
+// echo getBuilding($name);
+// echo getRoomnumber($name);
+
+function getBuilding(string $name) : string{
+    return substr($name, 2, 1);
+}//2
+
+function getRoomnumber(string $name) : string{
+    return substr($name, 4);
+}//304
+
+
+
+// //Fehlerbehandlung falls Kurzname nicht vorhanden
+function updateFreeRoom(array $freerooms){
+
+    $roomdata = $importer->getRooms();
+
+    foreach($freerooms as $rooms){
+        $id = $rooms->id;
+
+        for($i = 0; $i < count($roomdata); $i++){
+            if($roomdata[$i]->id == $id){
+                $name = $roomdata[$i]->kurzname;
+                $rooms->building = getBuilding($name);
+                $rooms->number = getRoomnumber($name);
+            }
+        }
+
+    }
+
+}
 
