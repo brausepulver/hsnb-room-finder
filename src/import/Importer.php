@@ -23,7 +23,7 @@ class Importer
         $this->end = $end;
 
         // get configuration options from config file
-        $config = ($debug ? $this->$DEBUG_CONFIG_PATH : $this->$CONFIG_PATH);
+        $config = ($debug ? $this->DEBUG_CONFIG_PATH : $this->CONFIG_PATH);
         $options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
         $this->options = $options;
     }
