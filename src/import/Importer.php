@@ -20,20 +20,21 @@ class Importer
     {
         $this->start = $start;
         $this->end = $end;
+        $this->debug = $debug;
 
         // get configuration options from config file
-        $config = ($debug ? self::$DEBUG_CONFIG_PATH : self::$CONFIG_PATH);
+        $config = ($this->debug ? self::$DEBUG_CONFIG_PATH : self::$CONFIG_PATH);
         $this->options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
 
         // build query
-        $url = $options['calendar_base'];
+        $url = $this->options['calendar_base'];
         $data = [
             'dvon' => $start->format('Y-m-d'),
             'dbis' => $end->format('Y-m-d'),
             'zvon' => $start->format('H:i:s'),
             'zbis' => $end->format('H:i:s')
         ];
-        $query = ($debug ? __DIR__ . "/$url" : $url . "&" . http_build_query($data)); // no parameters are used for debugging
+        $query = ($this->debug ? __DIR__ . "/$url" : $url . "&" . http_build_query($data)); // no parameters are used for debugging
 
         // get response and decode as json
         $this->json = json_decode(file_get_contents($query), $assoc = true);
@@ -48,7 +49,7 @@ class Importer
         // get events and remove rooms at those times
         $weekCounter = clone $this->start;
         while ($weekCounter < $this->end) { // in case time span is more than one week
-            $week = $start->format('Y') . '-W' . $start->format('W');
+            $week = $this->start->format('Y') . '-W' . $this->start->format('W');
 
             foreach ($this->getDays($week) as $day) {
                 foreach ($this->getEventInfos($day) as $eventInfo) {
@@ -91,7 +92,8 @@ class Importer
         $url = $this->options['rooms_base'];
 
         // try to retrieve room data from url and decode as json
-        if ($string = file_get_contents($url)) { // returns true on success
+        $query = ($this->debug ? __DIR__ . "/$url" : $url);
+        if ($string = file_get_contents($query)) { // returns true on success
             $json = json_decode($string, $assoc = true); // returns NULL if json cannot be decoded or data is deeper than recursion limit
             if (is_null($json)) throw new \Exception('String with room data could not be decoded as JSON.');
         } else {

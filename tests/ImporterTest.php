@@ -10,7 +10,7 @@ class ImporterTest extends TestCase
         $end = new DateTime("2020-W16-2 10:00:00");
 
         $importer = new Importer($start, $end, $debug = true);
-        $times = $importer->query($start, $end, $debug = true);
+        $times = $importer->query();
         $this->assertNotEmpty(
             $times->getAll()
         );
