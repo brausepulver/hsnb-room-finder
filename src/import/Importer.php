@@ -8,28 +8,31 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer
 {
-    public static $CONFIG_PATH = __DIR__ . '/config.json';
-    public static $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
+    public $CONFIG_PATH;
+    public $DEBUG_CONFIG_PATH;
 
     private $json;
     private $start;
     private $end;
     private $options;
 
-    private function __construct(array $json, \DateTimeInterface $start, \DateTimeInterface $end, array $options)
+    public function __construct(array $json, \DateTimeInterface $start = null, \DateTimeInterface $end = null, bool $debug = false)
     {
         $this->json = $json;
         $this->start = $start;
         $this->end = $end;
+
+        $this->CONFIG_PATH = __DIR__ . '/config.json';
+        $this->DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
+
+        // get configuration options from config file
+        $config = ($debug ? $this->DEBUG_CONFIG_PATH : $this->CONFIG_PATH);
+        $options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
         $this->options = $options;
     }
 
     public static function query(\DateTimeInterface $start, \DateTimeInterface $end, bool $debug = false) : TimeVector
     {
-        // get configuration options from config file
-        $config = ($debug ? self::$DEBUG_CONFIG_PATH : self::$CONFIG_PATH);
-        $options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
-
         // build query
         $url = $options['calendar_base'];
         $data = [
@@ -43,7 +46,7 @@ class Importer
         // get response and decode as json
         $json = json_decode(file_get_contents($query), $assoc = true);
 
-        $importer = new Importer($json, $start, $end, $options);
+        $importer = new Importer($json, $start, $end, $debug);
 
         // initialize the time vector with all possible rooms for every index
         $rooms = $importer->getRooms();
