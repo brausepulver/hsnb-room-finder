@@ -42,21 +42,21 @@ class Importer
     public function query() : TimeVector
     {
         // initialize the time vector with all possible rooms for every index
-        $rooms = $importer->getRooms();
-        $times = new TimeVector($importer->start, $importer->end, new \DateInterval('PT15M'), $rooms);
+        $rooms = $this->getRooms();
+        $times = new TimeVector($this->start, $this->end, new \DateInterval('PT15M'), $rooms);
 
         // get events and remove rooms at those times
-        $weekCounter = clone $importer->start;
-        while ($weekCounter < $importer->end) { // in case time span is more than one week
+        $weekCounter = clone $this->start;
+        while ($weekCounter < $this->end) { // in case time span is more than one week
             $week = $start->format('Y') . '-W' . $start->format('W');
 
-            foreach ($importer->getDays($week) as $day) {
-                foreach ($importer->getEventInfos($day) as $eventInfo) {
+            foreach ($this->getDays($week) as $day) {
+                foreach ($this->getEventInfos($day) as $eventInfo) {
                     $roomId = $eventInfo['veranstaltungsort'];
 
                     $eventId = $eventInfo['id'];
                     try {
-                        $event = $importer->makeEvent($eventId);
+                        $event = $this->makeEvent($eventId);
                     } catch (\Exception $e) {
                         continue;
                     }
