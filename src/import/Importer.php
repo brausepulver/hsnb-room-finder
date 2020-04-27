@@ -8,31 +8,23 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer
 {
-    public $CONFIG_PATH;
-    public $DEBUG_CONFIG_PATH;
+    public static $CONFIG_PATH = __DIR__ . '/config.json';
+    public static $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
 
     private $json;
     private $start;
     private $end;
     private $options;
 
-    public function __construct(array $json, \DateTimeInterface $start = null, \DateTimeInterface $end = null, bool $debug = false)
+    public function __construct(\DateTimeInterface $start, \DateTimeInterface $end, bool $debug = false)
     {
-        $this->json = $json;
         $this->start = $start;
         $this->end = $end;
 
-        $this->CONFIG_PATH = __DIR__ . '/config.json';
-        $this->DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
-
         // get configuration options from config file
-        $config = ($debug ? $this->DEBUG_CONFIG_PATH : $this->CONFIG_PATH);
-        $options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
-        $this->options = $options;
-    }
+        $config = ($debug ? self::$DEBUG_CONFIG_PATH : self::$CONFIG_PATH);
+        $this->options = json_decode(file_get_contents($config), $assoc = true)['Importer'];
 
-    public static function query(\DateTimeInterface $start, \DateTimeInterface $end, bool $debug = false) : TimeVector
-    {
         // build query
         $url = $options['calendar_base'];
         $data = [
@@ -44,10 +36,11 @@ class Importer
         $query = ($debug ? __DIR__ . "/$url" : $url . "&" . http_build_query($data)); // no parameters are used for debugging
 
         // get response and decode as json
-        $json = json_decode(file_get_contents($query), $assoc = true);
+        $this->json = json_decode(file_get_contents($query), $assoc = true);
+    }
 
-        $importer = new Importer($json, $start, $end, $debug);
-
+    public function query() : TimeVector
+    {
         // initialize the time vector with all possible rooms for every index
         $rooms = $importer->getRooms();
         $times = new TimeVector($importer->start, $importer->end, new \DateInterval('PT15M'), $rooms);
