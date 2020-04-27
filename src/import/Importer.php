@@ -8,8 +8,8 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer
 {
-    public $CONFIG_PATH = __DIR__ . '/config.json';
-    public $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
+    public $CONFIG_PATH;
+    public $DEBUG_CONFIG_PATH;
 
     private $json;
     private $start;
@@ -21,6 +21,9 @@ class Importer
         $this->json = $json;
         $this->start = $start;
         $this->end = $end;
+
+        $this->CONFIG_PATH = __DIR__ . '/config.json';
+        $this->DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
 
         // get configuration options from config file
         $config = ($debug ? $this->DEBUG_CONFIG_PATH : $this->CONFIG_PATH);
