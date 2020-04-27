@@ -23,14 +23,14 @@ class FreeRooms{
 
 }
 
-$roomdata = [];
 
 
 
 //gets time interval
 //puts every room id in an array
 function getIDarray(Importer $importer){
-    $timevector = $importer->query($start, $end, true);
+    global $importer;
+    $timevector = $importer->query();
     
     $times = $timevector->getAll();
     $timeID = [];
@@ -150,10 +150,6 @@ $freerooms = checkTime($minTime, $uniqueID, $convertedID);
 
 
 
-
-
-
-
 $name = 'L022017.2';
 // L = Kategorie (hier Ort)
 // 0 = 0
@@ -162,38 +158,37 @@ $name = 'L022017.2';
 // 304 = Raumnummer (erste Ziffer kann als Etage interpretiert werden)
 // Es gibt auch "geteilte" Räume, wie Hörsaal 4 und 5 (L022017.2 und L022017.1).
 
-// updateFreeRoom($freerooms);
+updateFreeRoom($freerooms);
+print_r($freerooms);
 
-// echo getBuilding($name);
-// echo getRoomnumber($name);
 
 function getBuilding(string $name) : string{
     return substr($name, 2, 1);
-}//2
+}
 
 function getRoomnumber(string $name) : string{
     return substr($name, 4);
-}//304
+}
 
 
 
 // //Fehlerbehandlung falls Kurzname nicht vorhanden
 function updateFreeRoom(array $freerooms){
 
+    global $importer;
     $roomdata = $importer->getRooms();
 
     foreach($freerooms as $rooms){
         $id = $rooms->id;
-
-        for($i = 0; $i < count($roomdata); $i++){
-            if($roomdata[$i]->id == $id){
-                $name = $roomdata[$i]->kurzname;
+        foreach($roomdata as $data){
+            if($data->id == $id){
+                $name = $data->shortName;                   
                 $rooms->building = getBuilding($name);
                 $rooms->number = getRoomnumber($name);
+            }else{
+                continue;
             }
         }
-
     }
-
 }
 
