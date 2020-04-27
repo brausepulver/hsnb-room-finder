@@ -92,7 +92,7 @@ class Importer
      * 
      * @return array of Room objects
      */
-    private function getRooms() : array
+    public function getRooms() : array
     {
         // base url where room data is located
         $url = $this->options['rooms_base'];
