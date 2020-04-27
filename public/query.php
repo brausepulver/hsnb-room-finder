@@ -1,0 +1,94 @@
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Johannes Kindermann">
+    <meta name="author" content="Florian Leder">
+    <title>Raum-Finder</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <h2>Raum-Finder</h2>
+
+    <section>
+        <h3>Bitte die gewünschten Anforderungen auswählen:</h3>
+
+        <form action="input.php" method="GET">
+            <ul>
+                <li>
+                    <span>
+                        <input type="checkbox" name="day_enabled" id="day_enabled">
+                        <label for="day_enabled">Tag</label>
+                    </span>
+                    <input type="date" name="day">
+                </li>
+                <li id="timeframe-container">
+                    <span>
+                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled">
+                        <label for="timeframe_enabled">Zeitraum</label>
+                    </span>
+                </li>
+                <li class="no-checkbox">
+                    <label for="timeframe_from">von</label>
+                    <input type="time" name="timeframe_from" id="timeframe_from">
+                </li>
+                <li class="no-checkbox">
+                    <label for="timeframe_to">bis</label>
+                    <input type="time" name="timeframe_to" id="timeframe_to">
+                </li>
+                <li>
+                    <span>
+                        <input type="checkbox" name="room_number_enabled" id="room_number_enabled">
+                        <label for="room_number_enabled">Raum-Nummer</label>
+                    </span>
+                    <input type="text" size="3" maxlength="3">
+                </li>
+                <li>
+                    <span>
+                        <input type="checkbox" name="building_number_enabled" id="building_number_enabled">
+                        <label for="building_number_enabled">Haus</label>
+                    </span>
+                    <select name="building_number" id="building_number">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                    </select>
+                </li>
+                <li>
+                    <span>
+                        <input type="checkbox" name="room_type_enabled" id="room_type_enabled">
+                        <label for="room_type_enabled">Raum-Art</label>
+                    </span>
+                    <select name="room_type" id="room_type">
+                        <option value="seminar">Seminar</option>
+                        <option value="pc_pool">PC-Pool</option>
+                        <option value="hoersaal">Hörsaal</option>
+                    </select>
+                </li>
+                <li>
+                    <span>
+                        <input type="checkbox" name="room_area_enabled" id="room_area_enabled">
+                        <label for="room_area_enabled">Fläche</label>
+                    </span>
+                    <fieldset>
+                        <input type="radio" name="room_area" id="room_area_lt30">
+                        <label for="room_area_lt30">&lt;30m²</label>
+                        <input type="radio" name="room_area" id="room_area_gt30">
+                        <label for="room_area_gt30">&gt;30m²</label>
+                    </fieldset>
+                </li>
+                <li>
+                    <input type="submit" value="Suchen">
+                </li>
+            </ul>
+        </form>
+    </section>
+
+    <section>
+        <h3>Ergebnisse</h3>
+        <p>Folgende Räume sind unter den gewünschten Kriterien frei:</p>
+    </section>
+
+</body>
+</html>
