@@ -104,11 +104,11 @@ require_once(__DIR__ . '/form.html');
     <section>
         <h3>Ergebnisse</h3>
         <ul id="results">
-            <?php
-            $rooms = getRoomsByInput();
-            foreach ($rooms as $room) {
-                echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
-            }
+<?php
+$rooms = getRoomsByInput();
+foreach ($rooms as $room) {
+    echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+}
             ?>
         </ul>
     </section>
