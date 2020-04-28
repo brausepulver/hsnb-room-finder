@@ -1,6 +1,6 @@
 <?php declare(strict_types=1);
 
-require_once(__DIR__ . '/../Import/Importer.php');
+require_once(__DIR__ . '/../import/Importer.php');
 
 use Import\Importer;
 use Import\Importer\{Event, Room, TimeVector};
@@ -192,3 +192,17 @@ function updateFreeRoom(array $freerooms){
     }
 }
 
+function getFreeRooms($start, $end, $debug = false)
+{
+    global $importer;
+    $importer = new Importer($start, $end, $debug);
+
+    $minTime = minTimeLength(30);
+    $timeID = getIDarray($importer);
+    $uniqueID = getUnique1D($timeID);
+    $convertedID = convertID($timeID, $uniqueID);
+    $freerooms = checkTime($minTime, $uniqueID, $convertedID);
+    return $freerooms;    
+}
+
+$importer;
