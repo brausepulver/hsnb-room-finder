@@ -126,40 +126,40 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 
 //Test
 //later values GUI interaction
-$start = new DateTime("2020-W16-2 08:00:00");
-$end = new DateTime("2020-W16-2 12:00:00");
-$minTime = minTimeLength(30);
+// $start = new DateTime("2020-W16-2 08:00:00");
+// $end = new DateTime("2020-W16-2 12:00:00");
+// $minTime = minTimeLength(30);
 
-//overall problems may caused by empty room objects(veranstaltungsort missing)
-$importer = new Importer($start, $end, true);
+// //overall problems may caused by empty room objects(veranstaltungsort missing)
+// $importer = new Importer($start, $end, true);
 
-$timeID = getIDarray($importer);//check  
-$uniqueID = getUnique1D($timeID);//check
-$convertedID = convertID($timeID, $uniqueID);//check
-$freerooms = checkTime($minTime, $uniqueID, $convertedID);
-// foreach ($freerooms as $room) {
-//     if ($room->start != 0) {
-//         print_r($room);
-//     }
-// }
+// $timeID = getIDarray($importer);//check  
+// $uniqueID = getUnique1D($timeID);//check
+// $convertedID = convertID($timeID, $uniqueID);//check
+// $freerooms = checkTime($minTime, $uniqueID, $convertedID);
+// // foreach ($freerooms as $room) {
+// //     if ($room->start != 0) {
+// //         print_r($room);
+// //     }
+// // }
+// // print_r($freerooms);
+
+// // $out = print_r($freerooms, true);
+// // str_replace('\n', '<br>', $out);
+// // echo $out;
+
+
+
+// $name = 'L022017.2';
+// // L = Kategorie (hier Ort)
+// // 0 = 0
+// // 2 = Haus
+// // 1 = Gebäudeteil
+// // 304 = Raumnummer (erste Ziffer kann als Etage interpretiert werden)
+// // Es gibt auch "geteilte" Räume, wie Hörsaal 4 und 5 (L022017.2 und L022017.1).
+
+// updateFreeRoom($freerooms);
 // print_r($freerooms);
-
-// $out = print_r($freerooms, true);
-// str_replace('\n', '<br>', $out);
-// echo $out;
-
-
-
-$name = 'L022017.2';
-// L = Kategorie (hier Ort)
-// 0 = 0
-// 2 = Haus
-// 1 = Gebäudeteil
-// 304 = Raumnummer (erste Ziffer kann als Etage interpretiert werden)
-// Es gibt auch "geteilte" Räume, wie Hörsaal 4 und 5 (L022017.2 und L022017.1).
-
-updateFreeRoom($freerooms);
-print_r($freerooms);
 
 
 function getBuilding(string $name) : string{

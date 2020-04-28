@@ -1,3 +1,28 @@
+<?php declare(strict_types=1);
+require_once(__DIR__ . '../src/analysis/analyse.php');
+
+function getRoomsByInput()
+{
+    $dayEnabled = $_GET['day_enabled'];
+    $day = $_GET['day'];
+
+    $timeframeEnabled = $_GET['timeframe_enabled'];
+    $timeframeFrom = $_GET['timeframe_from'];
+    $timeframeTo = $_GET['timeframe_to'];
+
+    $roomNumberEnabled = $_GET['room_number_enabled'];
+    $roomNumber = $_GET['room_number'];
+
+    $buildingNumberEnabled = $_GET['building_number_enabled'];
+    $buildingNumber = $_GET['building_number'];
+
+    $roomTypeEnabled = $_GET['room_type_enabled'];
+    $roomType = $_GET['room_type'];
+
+    $roomAreaEnabled = $_GET['room_area_enabled'];
+    $roomArea = $_GET['room_area'];
+}
+?>
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -13,7 +38,7 @@
     <section>
         <h3>Bitte die gewünschten Anforderungen auswählen:</h3>
 
-        <form action="input.php" method="GET">
+        <form action="query.php" method="GET">
             <ul>
                 <li>
                     <span>
@@ -41,7 +66,7 @@
                         <input type="checkbox" name="room_number_enabled" id="room_number_enabled">
                         <label for="room_number_enabled">Raum-Nummer</label>
                     </span>
-                    <input type="text" size="3" maxlength="3">
+                    <input type="text" name="room_number" size="3" maxlength="3">
                 </li>
                 <li>
                     <span>
@@ -88,6 +113,19 @@
     <section>
         <h3>Ergebnisse</h3>
         <p>Folgende Räume sind unter den gewünschten Kriterien frei:</p>
+        <?php
+        $start = new DateTime("2020-W16-2 08:00:00");
+        $end = new DateTime("2020-W16-2 12:00:00");
+        $minTime = minTimeLength(30);
+
+        $importer = new Importer($start, $end, true);
+
+        $timeID = getIDarray($importer);
+        $uniqueID = getUnique1D($timeID);
+        $convertedID = convertID($timeID, $uniqueID);
+        $freerooms = checkTime($minTime, $uniqueID, $convertedID);
+        print_r($freerooms);
+        ?>
     </section>
 
 </body>
