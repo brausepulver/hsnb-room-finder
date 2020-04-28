@@ -17,11 +17,10 @@ function getRoomsByInput() : array
 {
     global $start, $end;
 
-    // checkbox values can never be read, why?
-    // $dayEnabled = $_GET['day_enabled'];
+    $dayEnabled = isset($_GET['day_enabled']);
     $day = $_GET['day'];
 
-    // $timeframeEnabled = $_GET['timeframe_enabled'];
+    $timeframeEnabled = isset($_GET['timeframe_enabled']);
     $timeframeFrom = $_GET['timeframe_from'];
     $timeframeTo = $_GET['timeframe_to'];
 
