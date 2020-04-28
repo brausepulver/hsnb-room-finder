@@ -107,7 +107,7 @@ require_once(__DIR__ . '/form.html');
             <?php
             $rooms = getRoomsByInput();
             foreach ($rooms as $room) {
-                echo '<li>' . makeRoomHtml($room) . '</li>';
+                echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
             }
             ?>
         </ul>
