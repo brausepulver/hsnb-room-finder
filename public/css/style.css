@@ -8,7 +8,7 @@ h1, h2, h3 {
     text-align: center;
 }
 
-form {
+form, #results {
     width: 300px;
     margin: 0 auto;
 }
@@ -42,7 +42,7 @@ input[type="checkbox"] {
     padding-bottom: 0;
 } */
 
-li > label:after {
+li > input + label:after {
     content: ':';
 }
 
@@ -56,12 +56,22 @@ fieldset {
     display: block;
 } */
 
-input[type="submit"] {
+/* input[type="submit"] {
     margin-left: auto;
+    margin-top: 0.5rem;
+} */
+
+li:last-of-type {
     margin-top: 0.5rem;
 }
 
 h3 + p {
     text-align: center;
-    /* font-style: italic; */
+    font-style: italic;
+}
+
+#results li {
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    border: 1px solid black;
 }

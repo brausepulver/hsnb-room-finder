@@ -13,18 +13,18 @@
     <section>
         <h3>Bitte die gewünschten Anforderungen auswählen:</h3>
 
-        <form action="input.php" method="GET">
+        <form action="query.php" method="GET">
             <ul>
                 <li>
                     <span>
-                        <input type="checkbox" name="day_enabled" id="day_enabled">
+                        <input type="checkbox" name="day_enabled" id="day_enabled" checked disabled>
                         <label for="day_enabled">Tag</label>
                     </span>
-                    <input type="date" name="day">
+                    <input type="date" name="day" id="day">
                 </li>
                 <li id="timeframe-container">
                     <span>
-                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled">
+                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled" checked disabled>
                         <label for="timeframe_enabled">Zeitraum</label>
                     </span>
                 </li>
@@ -79,11 +79,12 @@
                     </fieldset>
                 </li>
                 <li>
+                    <span>
+                        <label for="debug">Debug</label>
+                        <input type="checkbox" name="debug" id="debug" checked>
+                    </span>
                     <input type="submit" value="Suchen">
                 </li>
             </ul>
         </form>
     </section>
-
-</body>
-</html>

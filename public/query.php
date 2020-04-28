@@ -1,132 +1,122 @@
 <?php declare(strict_types=1);
-require_once(__DIR__ . '../src/analysis/analyse.php');
+require_once(__DIR__ . '/../src/analysis/analyse.php');
 
-function getRoomsByInput()
+use Import\Importer;
+
+$start; // global variables are used to make start available in makeRoomHtml()
+$end;
+
+/**
+ * Get all free rooms specified by the data entered by the user.
+ * The method of choice is GET, to make the query RESTful.
+ * 
+ * @return array of FreeRooms objects, 
+ * each representing a free room that can be available at different times during the period.
+ */
+function getRoomsByInput() : array
 {
-    $dayEnabled = $_GET['day_enabled'];
+    global $start, $end;
+
+    // checkbox values can never be read, why?
+    // $dayEnabled = $_GET['day_enabled'];
     $day = $_GET['day'];
 
-    $timeframeEnabled = $_GET['timeframe_enabled'];
+    // $timeframeEnabled = $_GET['timeframe_enabled'];
     $timeframeFrom = $_GET['timeframe_from'];
     $timeframeTo = $_GET['timeframe_to'];
 
-    $roomNumberEnabled = $_GET['room_number_enabled'];
-    $roomNumber = $_GET['room_number'];
+    // $roomNumberEnabled = $_GET['room_number_enabled'];
+    // $roomNumber = $_GET['room_number'];
 
-    $buildingNumberEnabled = $_GET['building_number_enabled'];
-    $buildingNumber = $_GET['building_number'];
+    // $buildingNumberEnabled = $_GET['building_number_enabled'];
+    // $buildingNumber = $_GET['building_number'];
 
-    $roomTypeEnabled = $_GET['room_type_enabled'];
-    $roomType = $_GET['room_type'];
+    // $roomTypeEnabled = $_GET['room_type_enabled'];
+    // $roomType = $_GET['room_type'];
 
-    $roomAreaEnabled = $_GET['room_area_enabled'];
-    $roomArea = $_GET['room_area'];
+    // $roomAreaEnabled = $_GET['room_area_enabled'];
+    // $roomArea = $_GET['room_area'];
+
+    $debug = isset($_GET['debug']);
+
+    // not applicable because checkbox values can not be read
+    // if (isset($dayEnabled)) {
+    //     if (isset($timeframeEnabled)) {
+    //         echo $timeframeFrom;
+    //         $start = new \DateTime("$day $timeframeFrom");
+    //         $end = new \DateTime("$day $timeframeTo");
+    //     } else {
+    //         echo $day;
+    //         $start = new \DateTime($day);
+    //         $end = clone $start;
+    //         $end->add(new \DateInterval('P1D'));
+    //     }
+    // }
+
+    // these are for testing purposes
+    // echo $day;
+    // echo $timeframeFrom;
+    if (!empty($timeframeFrom) && !empty($timeframeTo)) {
+        $start = new \DateTime("$day $timeframeFrom");
+        $end = new \DateTime("$day $timeframeTo");
+    } else {
+        $start = new \DateTime($day);
+        $end = clone $start;
+        $end->add(new \DateInterval('P1D'));
+    }
+    return getFreeRooms($start, $end, $debug);
+}
+
+/**
+ * Make a time from an index given in the arrays contained in the free attribute of a FreeRooms object.
+ * The indices are counted in 15 minute steps by default.
+ * 
+ * @param \DateTimeInterface $start, the timestamp at which the FreeRooms object begins counting.
+ * @param int $index, representing one specific time.
+ * @return \DateTimeInterface corresponding to the index added to the starting time.
+ */
+function indexToTime(\DateTimeInterface $start, int $index)
+{
+    return $start->add(new \DateInterval('PT' . $index * 15 . 'M'));
+}
+
+/**
+ * Represent a FreeRooms object in HTML.
+ * 
+ * @param FreeRooms $room
+ * @return string HTML
+ */
+function makeRoomHtml(FreeRooms $room) : string
+{
+    global $start;
+
+    $ret = "ID: $room->id";
+    foreach ($room->free as $timeInterval) {
+        $ret .= ', ';
+        $ret .= indexToTime(clone $start, $timeInterval[0])->format('H:i:s');
+        $ret .= ' bis ';
+        $ret .= indexToTime(clone $start, $timeInterval[1])->format('H:i:s');
+    }
+    return $ret;
 }
 ?>
-<html lang="de">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="author" content="Johannes Kindermann">
-    <meta name="author" content="Florian Leder">
-    <title>Raum-Finder</title>
-    <link rel="stylesheet" href="css/style.css">
-</head>
-<body>
-    <h2>Raum-Finder</h2>
 
-    <section>
-        <h3>Bitte die gewünschten Anforderungen auswählen:</h3>
-
-        <form action="query.php" method="GET">
-            <ul>
-                <li>
-                    <span>
-                        <input type="checkbox" name="day_enabled" id="day_enabled">
-                        <label for="day_enabled">Tag</label>
-                    </span>
-                    <input type="date" name="day">
-                </li>
-                <li id="timeframe-container">
-                    <span>
-                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled">
-                        <label for="timeframe_enabled">Zeitraum</label>
-                    </span>
-                </li>
-                <li class="no-checkbox">
-                    <label for="timeframe_from">von</label>
-                    <input type="time" name="timeframe_from" id="timeframe_from">
-                </li>
-                <li class="no-checkbox">
-                    <label for="timeframe_to">bis</label>
-                    <input type="time" name="timeframe_to" id="timeframe_to">
-                </li>
-                <li>
-                    <span>
-                        <input type="checkbox" name="room_number_enabled" id="room_number_enabled">
-                        <label for="room_number_enabled">Raum-Nummer</label>
-                    </span>
-                    <input type="text" name="room_number" size="3" maxlength="3">
-                </li>
-                <li>
-                    <span>
-                        <input type="checkbox" name="building_number_enabled" id="building_number_enabled">
-                        <label for="building_number_enabled">Haus</label>
-                    </span>
-                    <select name="building_number" id="building_number">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
-                    </select>
-                </li>
-                <li>
-                    <span>
-                        <input type="checkbox" name="room_type_enabled" id="room_type_enabled">
-                        <label for="room_type_enabled">Raum-Art</label>
-                    </span>
-                    <select name="room_type" id="room_type">
-                        <option value="seminar">Seminar</option>
-                        <option value="pc_pool">PC-Pool</option>
-                        <option value="hoersaal">Hörsaal</option>
-                    </select>
-                </li>
-                <li>
-                    <span>
-                        <input type="checkbox" name="room_area_enabled" id="room_area_enabled">
-                        <label for="room_area_enabled">Fläche</label>
-                    </span>
-                    <fieldset>
-                        <input type="radio" name="room_area" id="room_area_lt30">
-                        <label for="room_area_lt30">&lt;30m²</label>
-                        <input type="radio" name="room_area" id="room_area_gt30">
-                        <label for="room_area_gt30">&gt;30m²</label>
-                    </fieldset>
-                </li>
-                <li>
-                    <input type="submit" value="Suchen">
-                </li>
-            </ul>
-        </form>
-    </section>
+<?php
+require_once(__DIR__ . '/form.html');
+?>
 
     <section>
         <h3>Ergebnisse</h3>
         <p>Folgende Räume sind unter den gewünschten Kriterien frei:</p>
-        <?php
-        $start = new DateTime("2020-W16-2 08:00:00");
-        $end = new DateTime("2020-W16-2 12:00:00");
-        $minTime = minTimeLength(30);
-
-        $importer = new Importer($start, $end, true);
-
-        $timeID = getIDarray($importer);
-        $uniqueID = getUnique1D($timeID);
-        $convertedID = convertID($timeID, $uniqueID);
-        $freerooms = checkTime($minTime, $uniqueID, $convertedID);
-        print_r($freerooms);
-        ?>
+        <ul id="results">
+            <?php
+            $rooms = getRoomsByInput();
+            foreach ($rooms as $room) {
+                echo '<li>' . makeRoomHtml($room) . '</li>';
+            }
+            ?>
+        </ul>
     </section>
 
-</body>
-</html>
+<?php
+require_once(__DIR__ . '/footer.html');
