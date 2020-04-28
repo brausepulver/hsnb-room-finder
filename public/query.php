@@ -90,7 +90,7 @@ function makeRoomHtml(FreeRooms $room) : string
 {
     global $start;
 
-    $ret = "ID: $room->id";
+    $ret = "Raum: $room->number (Haus $room->building)";
     foreach ($room->free as $timeInterval) {
         $ret .= ', ';
         $ret .= indexToTime(clone $start, $timeInterval[0])->format('H:i:s');

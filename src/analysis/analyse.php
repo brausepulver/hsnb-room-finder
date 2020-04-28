@@ -119,6 +119,7 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
             }
         }
     }
+    updateFreeRoom($output);
     return $output;
 }
 
