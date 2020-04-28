@@ -34,9 +34,6 @@ function getRoomsByInput() : array
     // $roomTypeEnabled = $_GET['room_type_enabled'];
     // $roomType = $_GET['room_type'];
 
-    // $roomAreaEnabled = $_GET['room_area_enabled'];
-    // $roomArea = $_GET['room_area'];
-
     $debug = isset($_GET['debug']);
 
     // not applicable because checkbox values can not be read
@@ -107,7 +104,6 @@ require_once(__DIR__ . '/form.html');
 
     <section>
         <h3>Ergebnisse</h3>
-        <p>Folgende Räume sind unter den gewünschten Kriterien frei:</p>
         <ul id="results">
             <?php
             $rooms = getRoomsByInput();
