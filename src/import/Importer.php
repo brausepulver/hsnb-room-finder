@@ -31,8 +31,8 @@ class Importer
         $data = [
             'dvon' => $start->format('Y-m-d'),
             'dbis' => $end->format('Y-m-d'),
-            'zvon' => $start->format('H:i:s'),
-            'zbis' => $end->format('H:i:s')
+            // 'zvon' => $start->format('H:i:s'),
+            // 'zbis' => $end->format('H:i:s')
         ];
         $query = ($this->debug ? __DIR__ . "/$url" : $url . "&" . http_build_query($data)); // no parameters are used for debugging
 
@@ -53,6 +53,8 @@ class Importer
 
             foreach ($this->getDays($week) as $day) {
                 foreach ($this->getEventInfos($day) as $eventInfo) {
+                    if (!isset($eventInfo['veranstaltungsort'])) 
+                        continue;
                     $roomId = $eventInfo['veranstaltungsort'];
 
                     $eventId = $eventInfo['id'];
