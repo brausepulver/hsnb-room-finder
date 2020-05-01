@@ -25,6 +25,9 @@ function getRoomsByInput() : array
     $timeframeFrom = $_GET['timeframe_from'];
     $timeframeTo = $_GET['timeframe_to'];
 
+    // $minTimeEnabled = $_GET['min_time_enabled'];
+    $minTimeIn = $_GET['min_time'];
+
     // $roomNumberEnabled = $_GET['room_number_enabled'];
     // $roomNumber = $_GET['room_number'];
 
@@ -64,7 +67,7 @@ function getRoomsByInput() : array
         $end = clone $start;
         $end->add(new \DateInterval('P1D'));
     }
-    return getFreeRooms($start, $end, $debug);
+    return getFreeRooms($start, $end, $debug, $minTimeIn);
 }
 
 /**
