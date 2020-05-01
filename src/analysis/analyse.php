@@ -119,6 +119,7 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
             }
         }
     }
+    updateFreeRoom($output);
     return $output;
 }
 
@@ -127,10 +128,9 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 //Test
 //later values GUI interaction
 // $start = new DateTime("2020-W16-2 08:00:00");
-// $end = new DateTime("2020-W16-2 12:00:00");
-// $minTime = minTimeLength(30);
+// $end = new DateTime("2020-W16-2 10:00:00");
+// $minTime = minTimeLength(60);
 
-// //overall problems may caused by empty room objects(veranstaltungsort missing)
 // $importer = new Importer($start, $end, true);
 
 // $timeID = getIDarray($importer);//check  
@@ -142,7 +142,7 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 // //         print_r($room);
 // //     }
 // // }
-// // print_r($freerooms);
+// print_r($freerooms);
 
 // // $out = print_r($freerooms, true);
 // // str_replace('\n', '<br>', $out);
@@ -192,12 +192,12 @@ function updateFreeRoom(array $freerooms){
     }
 }
 
-function getFreeRooms($start, $end, $debug = false)
+function getFreeRooms($start, $end, $debug = false, $minTimeIn)
 {
     global $importer;
     $importer = new Importer($start, $end, $debug);
 
-    $minTime = minTimeLength(30);
+    $minTime = minTimeLength(intval($minTimeIn));
     $timeID = getIDarray($importer);
     $uniqueID = getUnique1D($timeID);
     $convertedID = convertID($timeID, $uniqueID);

@@ -3,18 +3,18 @@
         "id": "11",
         "id2": "21",
         "kurzname": "L022017.2",
-        "name": "R 011 (Seminarraum), Haus 1"
+        "name": "R 011 (Seminarraum), Haus 2"
     },
     "12": {
         "id": "12",
         "id2": "22",
         "kurzname": "L031220",
-        "name": "R 012 (Seminarraum), Haus 2"
+        "name": "R 012 (Seminarraum), Haus 3"
     },
     "13": {
         "id": "13",
         "id2": "23",
-        "kurzname": "L021103",
-        "name": "R 013 (Seminarraum), Haus 3"
+        "kurzname": "L011103",
+        "name": "R 013 (Seminarraum), Haus 1"
     }
 }
