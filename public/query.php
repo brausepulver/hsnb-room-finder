@@ -16,6 +16,7 @@ $end;
 function getRoomsByInput() : array
 {
     global $start, $end;
+    $rooms = [];
 
     // checkbox values can never be read, why?
     // $dayEnabled = $_GET['day_enabled'];
@@ -26,13 +27,13 @@ function getRoomsByInput() : array
     $timeframeTo = $_GET['timeframe_to'];
 
     // $minTimeEnabled = $_GET['min_time_enabled'];
-    $minTimeIn = $_GET['min_time'];
+    // $minTimeIn = $_GET['min_time'];
 
     // $roomNumberEnabled = $_GET['room_number_enabled'];
     // $roomNumber = $_GET['room_number'];
 
-    // $buildingNumberEnabled = $_GET['building_number_enabled'];
-    // $buildingNumber = $_GET['building_number'];
+    $buildingNumberEnabled = isset($_GET['building_number_enabled']);
+    $buildingNumber = $_GET['building_number'];
 
     // $roomTypeEnabled = $_GET['room_type_enabled'];
     // $roomType = $_GET['room_type'];
@@ -67,8 +68,17 @@ function getRoomsByInput() : array
         $end = clone $start;
         $end->add(new \DateInterval('P1D'));
     }
+    $rooms = getFreeRooms($start, $end, $debug);
+
+    if($buildingNumberEnabled = true){
+        //value in array
+    }
+
+
     return getFreeRooms($start, $end, $debug, $minTimeIn);
 }
+
+
 
 /**
  * Make a time from an index given in the arrays contained in the free attribute of a FreeRooms object.

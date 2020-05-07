@@ -10,6 +10,7 @@ class FreeRooms{
      public $id;
      public $building;
      public $number;
+     //public $info;
     //  public $start;
     //  public $end;
      public $free;
@@ -144,9 +145,9 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 // // }
 // print_r($freerooms);
 
-// // $out = print_r($freerooms, true);
-// // str_replace('\n', '<br>', $out);
-// // echo $out;
+// $out = print_r($freerooms, true);
+// str_replace('\n', '<br>', $out);
+// echo $out;
 
 
 
@@ -185,6 +186,7 @@ function updateFreeRoom(array $freerooms){
                 $name = $data->shortName;                   
                 $rooms->building = getBuilding($name);
                 $rooms->number = getRoomnumber($name);
+                //$rooms->info = $data->name;
             }else{
                 continue;
             }
@@ -192,17 +194,48 @@ function updateFreeRoom(array $freerooms){
     }
 }
 
-function getFreeRooms($start, $end, $debug = false, $minTimeIn)
+
+//hier Bearbeitung
+
+function getFreeRooms($start, $end, $debug = false)
 {
     global $importer;
     $importer = new Importer($start, $end, $debug);
 
-    $minTime = minTimeLength(intval($minTimeIn));
+    // $minTime = minTimeLength(intval($minTimeIn));
+    $minTime = minTimeLength(15);
     $timeID = getIDarray($importer);
     $uniqueID = getUnique1D($timeID);
     $convertedID = convertID($timeID, $uniqueID);
     $freerooms = checkTime($minTime, $uniqueID, $convertedID);
+
+
+
     return $freerooms;    
+}
+
+// function getRoomsbyNumber(array $freerooms, int $number) : array{
+//     $output = [];
+//     foreach($freerooms as $room){
+//         if(intval($room->$number) == $number){
+//             $output = $room;
+//         }else{
+//             continue;
+//         }
+//     }
+//     return $output;
+// }
+
+function getRoomsbyBuilding(array $freerooms, int $building) : array{
+    $output = [];
+    foreach($freerooms as $room){
+        if(intval($room->$building) == $number){
+            $output = $room;
+        }else{
+            continue;
+        }
+    }
+    return $output;
 }
 
 $importer;
