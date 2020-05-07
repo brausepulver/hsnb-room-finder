@@ -18,11 +18,10 @@ function getRoomsByInput() : array
     global $start, $end;
     $rooms = [];
 
-    // checkbox values can never be read, why?
-    // $dayEnabled = $_GET['day_enabled'];
+    $dayEnabled = isset($_GET['day_enabled']);
     $day = $_GET['day'];
 
-    // $timeframeEnabled = $_GET['timeframe_enabled'];
+    $timeframeEnabled = isset($_GET['timeframe_enabled']);
     $timeframeFrom = $_GET['timeframe_from'];
     $timeframeTo = $_GET['timeframe_to'];
 
@@ -37,9 +36,6 @@ function getRoomsByInput() : array
 
     // $roomTypeEnabled = $_GET['room_type_enabled'];
     // $roomType = $_GET['room_type'];
-
-    // $roomAreaEnabled = $_GET['room_area_enabled'];
-    // $roomArea = $_GET['room_area'];
 
     $debug = isset($_GET['debug']);
 
@@ -120,13 +116,12 @@ require_once(__DIR__ . '/form.html');
 
     <section>
         <h3>Ergebnisse</h3>
-        <p>Folgende Räume sind unter den gewünschten Kriterien frei:</p>
         <ul id="results">
-            <?php
-            $rooms = getRoomsByInput();
-            foreach ($rooms as $room) {
-                echo '<li>' . makeRoomHtml($room) . '</li>';
-            }
+<?php
+$rooms = getRoomsByInput();
+foreach ($rooms as $room) {
+    echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+}
             ?>
         </ul>
     </section>
