@@ -159,7 +159,10 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 // // 304 = Raumnummer (erste Ziffer kann als Etage interpretiert werden)
 // // Es gibt auch "geteilte" Räume, wie Hörsaal 4 und 5 (L022017.2 und L022017.1).
 
-// updateFreeRoom($freerooms);
+// $conditions = [];
+// $conditions['building'] = null;
+// $conditions['number'] = null;
+// $freerooms = getFreeRooms($start, $end, true, $conditions);
 // print_r($freerooms);
 
 
@@ -186,7 +189,7 @@ function updateFreeRoom(array $freerooms){
                 $name = $data->shortName;                   
                 $rooms->building = getBuilding($name);
                 $rooms->number = getRoomnumber($name);
-                //$rooms->info = $data->name;
+                $rooms->info = $data->name;
             }else{
                 continue;
             }
@@ -197,10 +200,11 @@ function updateFreeRoom(array $freerooms){
 
 //hier Bearbeitung
 
-function getFreeRooms($start, $end, $debug = false)
+function getFreeRooms($start, $end, $debug = false, $conditions)
 {
     global $importer;
     $importer = new Importer($start, $end, $debug);
+    $output = [];
 
     // $minTime = minTimeLength(intval($minTimeIn));
     $minTime = minTimeLength(15);
@@ -208,34 +212,61 @@ function getFreeRooms($start, $end, $debug = false)
     $uniqueID = getUnique1D($timeID);
     $convertedID = convertID($timeID, $uniqueID);
     $freerooms = checkTime($minTime, $uniqueID, $convertedID);
+    //check conditions
+    $building = $conditions['building'];
+    $number = $conditions['number'];
+    // $type = $conditions['type'];
 
+    if(empty($building) && empty($number)){     //later add && empty($type)
+        return $freerooms;
+    }else{
+        if(!empty($building)){
+            $output = getRoomsbyBuilding($freerooms, $building);   
+        }
+         if(!empty($number)){
+             $output = getRoomsbyNumber($freerooms, $number);
+        }
+        return $output;
+    }
+    // if(!$type = null){
+    //     $output = getRoomsbyType($freerooms, $type);
+    // }
 
-
-    return $freerooms;    
 }
 
-// function getRoomsbyNumber(array $freerooms, int $number) : array{
-//     $output = [];
-//     foreach($freerooms as $room){
-//         if(intval($room->$number) == $number){
-//             $output = $room;
-//         }else{
-//             continue;
-//         }
-//     }
-//     return $output;
-// }
-
-function getRoomsbyBuilding(array $freerooms, int $building) : array{
+function getRoomsbyNumber(array $freerooms, string $numberin) : array {
     $output = [];
+    $number = floatval($numberin);
     foreach($freerooms as $room){
-        if(intval($room->$building) == $number){
-            $output = $room;
+        $roomnumber = floatval($room->number);
+        if($roomnumber == $number){
+            $output[] = $room;
         }else{
             continue;
         }
     }
     return $output;
+}
+
+function getRoomsbyBuilding(array $freerooms, string $buildingin) : array {
+    $output = [];
+    $building = intval($buildingin);
+    foreach($freerooms as $room){
+        $roombuilding = intval($room->building);
+        if($roombuilding == $building){
+            $output[] = $room;
+        }else{
+            continue;
+        }
+    }
+    return $output;
+}
+
+function getRoomsbyType(array $freerooms, string $typein) : array{
+    //analyse roomtype
+
+
+    
 }
 
 $importer;

@@ -16,7 +16,7 @@ $end;
 function getRoomsByInput() : array
 {
     global $start, $end;
-    $rooms = [];
+    $conditions = [];
 
     $dayEnabled = isset($_GET['day_enabled']);
     $day = $_GET['day'];
@@ -28,8 +28,8 @@ function getRoomsByInput() : array
     // $minTimeEnabled = $_GET['min_time_enabled'];
     // $minTimeIn = $_GET['min_time'];
 
-    // $roomNumberEnabled = $_GET['room_number_enabled'];
-    // $roomNumber = $_GET['room_number'];
+    $roomNumberEnabled = isset($_GET['room_number_enabled']);
+    $roomNumber = $_GET['room_number'];
 
     $buildingNumberEnabled = isset($_GET['building_number_enabled']);
     $buildingNumber = $_GET['building_number'];
@@ -64,14 +64,36 @@ function getRoomsByInput() : array
         $end = clone $start;
         $end->add(new \DateInterval('P1D'));
     }
-    $rooms = getFreeRooms($start, $end, $debug);
 
-    if($buildingNumberEnabled = true){
-        //value in array
+    if($buildingNumberEnabled){
+        $conditions['building'] = $buildingNumber;
+    }
+    else{
+        $conditions['building'] = null;
     }
 
+    if($roomNumberEnabled = true){
+        if(!empty($roomNumber)){
+            $conditions['number'] = $roomNumber;
+        }else{
+            $conditions['number'] = null;
+        }
+    }
+    else{
+        $conditions['number'] = null;
+    }
 
-    return getFreeRooms($start, $end, $debug, $minTimeIn);
+    // if($roomNumberEnabled = true){
+    //     $conditions['type'] = $roomType;
+    // }
+    // else{
+    //     $conditions['type'] = null;
+    // }
+
+
+
+
+    return getFreeRooms($start, $end, $debug, $conditions);
 }
 
 
