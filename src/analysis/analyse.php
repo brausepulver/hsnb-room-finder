@@ -186,10 +186,15 @@ function updateFreeRoom(array $freerooms){
         $id = $rooms->id;
         foreach($roomdata as $data){
             if($data->id == $id){
-                $name = $data->shortName;                   
-                $rooms->building = getBuilding($name);
-                $rooms->number = getRoomnumber($name);
-                $rooms->info = $data->name;
+                $name = $data->shortName;
+                if(!empty($name)){                   
+                    $rooms->building = getBuilding($name);
+                    $rooms->number = getRoomnumber($name);
+                    $rooms->info = $data->name;
+                }else{
+                    //id merken und in Liste packen
+                    continue;
+                }
             }else{
                 continue;
             }
