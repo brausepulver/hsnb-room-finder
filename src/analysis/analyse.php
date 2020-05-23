@@ -10,9 +10,7 @@ class FreeRooms{
      public $id;
      public $building;
      public $number;
-     //public $info;
-    //  public $start;
-    //  public $end;
+    //  public $info;
      public $free;
 
      public function __construct(){
@@ -20,16 +18,15 @@ class FreeRooms{
         $this->free = [];
         
     }
-
-
 }
 
-
-
-
-//gets time interval
-//puts every room id in an array
-function getIDarray(Importer $importer){
+/**
+ * Creates array with every available room id(multiple occupancy possible)
+ * $i equals time index(counted in 15 minutes steps)
+ * @param Importer $importer, use query() method to get room information
+ * @return array $timeID, contains IDs of available rooms
+ */
+function getIDarray(Importer $importer) : array{
     global $importer;
     $timevector = $importer->query();
     
@@ -39,23 +36,26 @@ function getIDarray(Importer $importer){
         $timeID[$i] = [];
         foreach ($times[$i] as $room){
             $timeID[$i][] = $room->id;
-
         }
-
     }
     return $timeID;
 }
 
-
-
-//calculate number based on minimal time
-//used in analysis
+/**
+ * Calculate index based on preferred minimal time
+ * @param int $minTime, minimum time amount the room should be available
+ * @return int integer representing a specific amount of time
+ */
  function minTimeLength(int $minTime) : int {
     return intval($minTime / 15);
 }
 
-//transforms 2d array to 1d array
-//contains unique id2 values
+
+/**
+ * Transforms a 2d array into 1d array with unique values, removes multiple occurring IDs 
+ * @param array $input, $timeID array containing room ids
+ * @return array $unique, contains unique values (IDs)
+ */
 function getUnique1D(array $input) : array {
     $output = array();
     for($i = 0; $i < count($input); $i++){
@@ -63,7 +63,7 @@ function getUnique1D(array $input) : array {
             $output[] = $input[$i][$j];
         }
     }
-    $tmp = array_unique($output);                //maybe problem bc of array_unique
+    $tmp = array_unique($output);                
     $unique = [];
     foreach($tmp as $r){
         $unique[] = $r;
@@ -71,10 +71,15 @@ function getUnique1D(array $input) : array {
     return $unique;
 }
 
-//checks if id from uniqueID is contained in timeID
-//for every id => array of 0 and 1
-//true => 1 (id in array)
-//false => 0 (id not in array)
+/**
+ * Checks if a unique ID is contained in $timeID
+ * Every ID gets an array with 1 or 0 values
+ * 1 indicates that the room is available at that time(unique ID in $timeID)
+ * 0 indicates that the room is not available at that time(unique ID not in $timeID)
+ * @param array $timeID, contains information about availabilty based on query() method
+ * @param array $uniqueID, contains unique values(IDs)
+ * @return array $convertedID, each room ID has information about the availability at a specific time
+ */
 function convertID(array $timeID, array $uniqueID) : array {
     $convertedID[][] = array();
     for($i = 0; $i < count($uniqueID); $i++){
@@ -91,6 +96,14 @@ function convertID(array $timeID, array $uniqueID) : array {
     return $convertedID;
 }
 
+/**
+ * Checks if room is available in a given time interval
+ * If available the FreeRooms object is updated(id, start, end, building, roomnr, info)
+ * @param int $minTime, minimum amount of the time, the room should be free
+ * @param array $uniqueID, contains unique values(IDs)
+ * @param array $convertedID, contains information about the availability at a specific time
+ * @return array $output, updated FreeRooms objects, that are available 
+ */
 //checks availabilty based on minTime and the converted ID array (output convertID())
 function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
     $mind = $minTime;
@@ -98,7 +111,8 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
     for($i = 0; $i < count($convertedID); $i++){
         $count = 0;
         $free = new FreeRooms();
-        if(!in_array(0, $convertedID[$i])){
+        //room is available during given time interval
+        if(!in_array(0, $convertedID[$i])){                 
             $free->id = $uniqueID[$i];
             $free->free[0][0] = 0;
             $free->free[0][1] = count($convertedID[$i]);
@@ -126,57 +140,35 @@ function checkTime(int $minTime, array $uniqueID, array $convertedID) : array {
 
 
 
-//Test
-//later values GUI interaction
-// $start = new DateTime("2020-W16-2 08:00:00");
-// $end = new DateTime("2020-W16-2 10:00:00");
-// $minTime = minTimeLength(60);
+// $name = 'L022017.2'
+// L = categorie
+// 0 = 0
+// 2 = building
+// 1 = building complex number
+// 304 = room number
 
-// $importer = new Importer($start, $end, true);
-
-// $timeID = getIDarray($importer);//check  
-// $uniqueID = getUnique1D($timeID);//check
-// $convertedID = convertID($timeID, $uniqueID);//check
-// $freerooms = checkTime($minTime, $uniqueID, $convertedID);
-// // foreach ($freerooms as $room) {
-// //     if ($room->start != 0) {
-// //         print_r($room);
-// //     }
-// // }
-// print_r($freerooms);
-
-// $out = print_r($freerooms, true);
-// str_replace('\n', '<br>', $out);
-// echo $out;
-
-
-
-// $name = 'L022017.2';
-// // L = Kategorie (hier Ort)
-// // 0 = 0
-// // 2 = Haus
-// // 1 = Gebäudeteil
-// // 304 = Raumnummer (erste Ziffer kann als Etage interpretiert werden)
-// // Es gibt auch "geteilte" Räume, wie Hörsaal 4 und 5 (L022017.2 und L022017.1).
-
-// $conditions = [];
-// $conditions['building'] = null;
-// $conditions['number'] = null;
-// $freerooms = getFreeRooms($start, $end, true, $conditions);
-// print_r($freerooms);
-
-
+/**
+ * Gets building number from shortname
+ * @param string $name, shortname as seen above
+ * @return string building number
+ */
 function getBuilding(string $name) : string{
     return substr($name, 2, 1);
 }
-
+/**
+ * Gets room number from shortname
+ * @param string $name, shortname as seen above
+ * @return string room number
+ */
 function getRoomnumber(string $name) : string{
     return substr($name, 4);
 }
 
 
-
-// //Fehlerbehandlung falls Kurzname nicht vorhanden
+/**
+ * Update information of a FreeRooms object by adding building, room number and info
+ * @param array $freerooms, contains several FreeRooms objects
+ */
 function updateFreeRoom(array $freerooms){
 
     global $importer;
@@ -204,8 +196,16 @@ function updateFreeRoom(array $freerooms){
 
 
 //hier Bearbeitung
-
-function getFreeRooms($start, $end, $debug = false, $conditions)
+/**
+ * Combines analyse methods
+ * Proceeds time interval and search conditions
+ * @param \DateTimeInterface $start, the timestamp at which the FreeRooms object begins counting
+ * @param \DateTimeInterdace $end, the timestamp at which the FreeRooms object ends counting
+ * @param boolean $debug, if true the function uses test data; if false the function uses real data
+ * @param array $conditions, inforamtion to limit the search by certain criteria(set by the user)
+ * @return array $output, contains all available rooms which fullfill all given conditions
+ */
+function getFreeRooms($start, $end, $debug = false, $conditions) :array
 {
     global $importer;
     $importer = new Importer($start, $end, $debug);
@@ -222,6 +222,7 @@ function getFreeRooms($start, $end, $debug = false, $conditions)
     $number = $conditions['number'];
     // $type = $conditions['type'];
 
+    // no search criteria given just returns $freerooms
     if(empty($building) && empty($number)){     //later add && empty($type)
         return $freerooms;
     }else{
@@ -239,6 +240,13 @@ function getFreeRooms($start, $end, $debug = false, $conditions)
 
 }
 
+/**
+ * Filters available rooms by a given room number
+ * @param array $freerooms, contains several FreeRooms objects
+ * @param string $numberin, wanted room number
+ * @return array $output, contains FreeRooms objects where room number equals the wanted room number
+ */
+
 function getRoomsbyNumber(array $freerooms, string $numberin) : array {
     $output = [];
     $number = floatval($numberin);
@@ -253,6 +261,12 @@ function getRoomsbyNumber(array $freerooms, string $numberin) : array {
     return $output;
 }
 
+/**
+ * Filters available rooms by a given building number
+ * @param array $freerooms, contains several FreeRooms objects
+ * @param string $buildingin, wanted building number
+ * @param array $output, contains FreeRooms objects located in the wanted building
+ */
 function getRoomsbyBuilding(array $freerooms, string $buildingin) : array {
     $output = [];
     $building = intval($buildingin);
@@ -275,3 +289,18 @@ function getRoomsbyType(array $freerooms, string $typein) : array{
 }
 
 $importer;
+
+
+// test methods
+// uses test data
+// $start = new DateTime("2020-W16-2 08:00:00");
+// $end = new DateTime("2020-W16-2 10:00:00");
+// $minTime = minTimeLength(60);
+
+// $importer = new Importer($start, $end, true);
+
+// $conditions = [];
+// $conditions['building'] = null;
+// $conditions['number'] = null;
+// $freerooms = getFreeRooms($start, $end, true, $conditions);
+// print_r($freerooms);
