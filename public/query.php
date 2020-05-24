@@ -34,8 +34,8 @@ function getRoomsByInput() : array
     $buildingNumberEnabled = isset($_GET['building_number_enabled']);
     $buildingNumber = $_GET['building_number'];
 
-    // $roomTypeEnabled = $_GET['room_type_enabled'];
-    // $roomType = $_GET['room_type'];
+    $roomTypeEnabled = $_GET['room_type_enabled'];
+    $roomType = $_GET['room_type'];
 
     $debug = isset($_GET['debug']);
 
@@ -83,12 +83,12 @@ function getRoomsByInput() : array
         $conditions['number'] = null;
     }
 
-    // if($roomNumberEnabled = true){
-    //     $conditions['type'] = $roomType;
-    // }
-    // else{
-    //     $conditions['type'] = null;
-    // }
+    if($roomNumberEnabled = true){
+        $conditions['type'] = $roomType;
+    }
+    else{
+        $conditions['type'] = null;
+    }
 
 
 
@@ -121,7 +121,7 @@ function makeRoomHtml(FreeRooms $room) : string
 {
     global $start;
 
-    $ret = "Raum: $room->number (Haus $room->building)";
+    $ret = "Raum: $room->number (Haus $room->building), $room->info";
     foreach ($room->free as $timeInterval) {
         $ret .= ', ';
         $ret .= indexToTime(clone $start, $timeInterval[0])->format('H:i:s');

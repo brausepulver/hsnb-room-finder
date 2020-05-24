@@ -10,7 +10,7 @@ class FreeRooms{
      public $id;
      public $building;
      public $number;
-    //  public $info;
+     public $info;
      public $free;
 
      public function __construct(){
@@ -220,10 +220,10 @@ function getFreeRooms($start, $end, $debug = false, $conditions) :array
     //check conditions
     $building = $conditions['building'];
     $number = $conditions['number'];
-    // $type = $conditions['type'];
+    $type = $conditions['type'];
 
     // no search criteria given just returns $freerooms
-    if(empty($building) && empty($number)){     //later add && empty($type)
+    if(empty($building) && empty($number) && empty($type)){     //later add && empty($type)
         return $freerooms;
     }else{
         if(!empty($building)){
@@ -232,11 +232,12 @@ function getFreeRooms($start, $end, $debug = false, $conditions) :array
          if(!empty($number)){
              $output = getRoomsbyNumber($freerooms, $number);
         }
+        if(!empty($type)){
+            $output = getRoomsbyType($freerooms, $type);
+        }
         return $output;
     }
-    // if(!$type = null){
-    //     $output = getRoomsbyType($freerooms, $type);
-    // }
+
 
 }
 
@@ -282,10 +283,21 @@ function getRoomsbyBuilding(array $freerooms, string $buildingin) : array {
 }
 
 function getRoomsbyType(array $freerooms, string $typein) : array{
-    //analyse roomtype
+    $output = [];
 
-
-    
+    foreach($freerooms as $room){
+        if(!empty($room->info)){
+            $roomtype = strtolower($room->info);
+            if(!strpos($roomtype, $typein) == false){
+                $output[] = $room;
+            }else{
+                continue;
+            }
+        }else{
+            continue;
+        }
+    }
+    return $output; 
 }
 
 $importer;
@@ -293,6 +305,7 @@ $importer;
 
 // test methods
 // uses test data
+
 // $start = new DateTime("2020-W16-2 08:00:00");
 // $end = new DateTime("2020-W16-2 10:00:00");
 // $minTime = minTimeLength(60);
@@ -302,5 +315,6 @@ $importer;
 // $conditions = [];
 // $conditions['building'] = null;
 // $conditions['number'] = null;
+// $conditions['type'] = "seminar";
 // $freerooms = getFreeRooms($start, $end, true, $conditions);
 // print_r($freerooms);
