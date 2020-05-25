@@ -209,7 +209,6 @@ function getFreeRooms($start, $end, $debug, $conditions) : array
 {
     global $importer;
     $importer = new Importer($start, $end, $debug);
-    $output = [];
 
     // $minTime = minTimeLength(intval($minTimeIn));
     $minTime = minTimeLength(15);
@@ -225,6 +224,8 @@ function getFreeRooms($start, $end, $debug, $conditions) : array
         $rooms = getRoomsbyBuilding($rooms, $conditions['building_number']);
     }
     if (isset($conditions['room_type'])) {
+        echo 'hi';
+        echo $conditions['room_type'];
         $rooms = getRoomsByType($rooms, $conditions['room_type']);
     }
     return $rooms;
@@ -271,22 +272,18 @@ function getRoomsbyBuilding(array $freerooms, string $buildingin) : array {
     return $output;
 }
 
-function getRoomsbyType(array $freerooms, string $typein) : array{
-    $output = [];
+function getRoomsbyType(array $rooms, string $roomTypeIndex) : array{
+    $filteredRooms = [];
 
-    foreach($freerooms as $room){
-        if(!empty($room->info)){
-            $roomtype = strtolower($room->info);
-            if(!strpos($roomtype, $typein) == false){
-                $output[] = $room;
-            }else{
-                continue;
-            }
-        }else{
-            continue;
+    $roomTypes = Importer::getRoomTypes();
+    $roomType = $roomTypes[$roomTypeIndex];
+
+    foreach ($rooms as $room) {
+        if (!empty($room->info) && strpos($room->info, $roomType) !== false) {
+            $filteredRooms[] = $room;
         }
     }
-    return $output; 
+    return $filteredRooms;
 }
 
 $importer;
