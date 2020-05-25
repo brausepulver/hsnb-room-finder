@@ -21,14 +21,14 @@ use Import\Importer;
             <ul>
                 <li>
                     <span>
-                        <input type="checkbox" name="day_enabled" id="day_enabled" checked disabled>
+                        <input type="checkbox" name="day_enabled" id="day_enabled" checked>
                         <label for="day_enabled">Tag</label>
                     </span>
                     <input type="date" name="day" id="day">
                 </li>
                 <li id="timeframe-container">
                     <span>
-                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled" checked disabled>
+                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled" checked>
                         <label for="timeframe_enabled">Zeitraum</label>
                     </span>
                 </li>
