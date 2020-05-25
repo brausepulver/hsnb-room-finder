@@ -30,9 +30,7 @@ class Importer
         $url = $this->options['calendar_base'];
         $data = [
             'dvon' => $start->format('Y-m-d'),
-            'dbis' => $end->format('Y-m-d'),
-            // 'zvon' => $start->format('H:i:s'),
-            // 'zbis' => $end->format('H:i:s')
+            'dbis' => $end->format('Y-m-d')
         ];
         $query = ($this->debug ? __DIR__ . "/$url" : $url . "&" . http_build_query($data)); // no parameters are used for debugging
 
