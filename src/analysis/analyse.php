@@ -272,6 +272,14 @@ function getRoomsbyBuilding(array $freerooms, string $buildingin) : array {
     return $output;
 }
 
+/**
+ * Filters rooms by a given room type.
+ * 
+ * @param array $rooms
+ * @param string $roomTypeIndex Index for the array given by Importer::getRoomTypes().
+ * 
+ * @return array
+ */
 function getRoomsbyType(array $rooms, string $roomTypeIndex) : array{
     $filteredRooms = [];
 
