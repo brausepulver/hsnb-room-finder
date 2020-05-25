@@ -86,6 +86,9 @@ for ($i = 1, $roomTypes = Importer::getRoomTypes(); $i < count($roomTypes); $i++
 ?>
                     </select>
                 </li>
+                <li>
+                    <input type="submit" value="Suchen">
+                </li>
             </ul>
         </form>
     </section>
