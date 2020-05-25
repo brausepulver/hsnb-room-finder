@@ -57,7 +57,7 @@ use Import\Importer;
                 <li>
                     <span>
                         <input type="checkbox" name="room_number_enabled" id="room_number_enabled">
-                        <label for="room_number_enabled">Raum-Nummer</label>
+                        <label for="room_number_enabled">Nummer</label>
                     </span>
                     <input type="text" size="5" maxlength="5" id="room_number" name="room_number">
                 </li>
@@ -76,7 +76,7 @@ use Import\Importer;
                 <li>
                     <span>
                         <input type="checkbox" name="room_type_enabled" id="room_type_enabled">
-                        <label for="room_type_enabled">Raum-Art</label>
+                        <label for="room_type_enabled">Typ</label>
                     </span>
                     <select name="room_type" id="room_type">
 <?php
