@@ -224,8 +224,6 @@ function getFreeRooms($start, $end, $debug, $conditions) : array
         $rooms = getRoomsbyBuilding($rooms, $conditions['building_number']);
     }
     if (isset($conditions['room_type'])) {
-        echo 'hi';
-        echo $conditions['room_type'];
         $rooms = getRoomsByType($rooms, $conditions['room_type']);
     }
     return $rooms;
