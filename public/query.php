@@ -25,6 +25,21 @@ function getRoomsByInput() : array
     $timeframeFrom = $_GET['timeframe_from'];
     $timeframeTo = $_GET['timeframe_to'];
 
+    if ($dayEnabled && !empty($day)) {
+        if ($timeframeEnabled && !empty($timeframeFrom) && !empty($timeframeTo)) {
+            $start = new \DateTime("$day $timeframeFrom");
+            $end = new \DateTime("$day $timeframeTo");
+        } else {
+            $start = new \DateTime($day);
+            $end = clone $start;
+            $end->add(new \DateInterval('P1D'));
+        }
+    } else {
+        $start = new \DateTime('today');
+        $end = clone $start;
+        $end->add(new \DateInterval('P1D'));
+    }
+
     $roomNumberEnabled = isset($_GET['room_number_enabled']);
     $roomNumber = $_GET['room_number'];
     if ($roomNumberEnabled) $conditions['room_number'] = $roomNumber;
@@ -36,17 +51,6 @@ function getRoomsByInput() : array
     $roomTypeEnabled = isset($_GET['room_type_enabled']);
     $roomType = $_GET['room_type'];
     if ($roomTypeEnabled) $conditions['room_type'] = $roomType;
-
-    if ($dayEnabled) {
-        if ($timeframeEnabled) {
-            $start = new \DateTime("$day $timeframeFrom");
-            $end = new \DateTime("$day $timeframeTo");
-        } else {
-            $start = new \DateTime($day);
-            $end = clone $start;
-            $end->add(new \DateInterval('P1D'));
-        }
-    }
 
     $debug = false;
 
