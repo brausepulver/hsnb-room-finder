@@ -42,7 +42,11 @@ class TimeVector
 
     public function remove(\DateTimeInterface $indexTime, $elementId)
     {
-        $i = $this->timeToIndex($indexTime);
+        try {
+            $i = $this->timeToIndex($indexTime);
+        } catch (\InvalidArgumentException $e) {
+            return;
+        }
         unset($this->times[$i][$elementId]);
     }
 
@@ -60,8 +64,9 @@ class TimeVector
      */
     private function timeToIndex(\DateTimeInterface $indexTime) : int
     {
-        if ($indexTime < $this->start || $indexTime > $this->end) // time not contained in array
+        if ($indexTime < $this->start || $indexTime > $this->end) { // time not contained in array
             throw new \InvalidArgumentException('invalid index');
+        } 
 
         // get index time as a unix timestamp and offset from the start time
         $indexTimestamp = $indexTime->getTimestamp() - $this->start->getTimestamp();

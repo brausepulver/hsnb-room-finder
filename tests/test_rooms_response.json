@@ -16,5 +16,11 @@
         "id2": "23",
         "kurzname": "L011103",
         "name": "R 013 (Hörsaal), Haus 1"
+    },
+    "14": {
+        "id": "14",
+        "id2": "24",
+        "kurzname": "L011104",
+        "name": "R 014 (Hörsaal), Haus 1"
     }
 }
