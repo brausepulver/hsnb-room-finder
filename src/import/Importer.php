@@ -8,6 +8,11 @@ use Import\Utility\{Event, Room, TimeVector};
 
 class Importer
 {
+    /* Files from which configuration data will be loaded. A configuration file contains calendar_base and rooms_base URLs.
+       $CONFIG_PATH configuration is for regular operation. 
+       $DEBUG_CONFIG_PATH configuration is for debug operation. It is used if the $debug variable in the constructor is set to true.
+       It makes the object use test data located at tests/test_calendar_response.json and tests/test_room_response.json.
+       */
     public static $CONFIG_PATH = __DIR__ . '/config.json';
     public static $DEBUG_CONFIG_PATH = __DIR__ . '/debug_config.json';
 
@@ -16,6 +21,13 @@ class Importer
     private $end;
     private $options;
 
+    /**
+     * Construct an Importer object used to import room and room vacancy data.
+     * 
+     * @param \DateTimeInterface $start Time from which to start import.
+     * @param \DateTimeInterace $end Time at which to end import.
+     * @param bool $debug Wether to use test data or not.
+     */
     public function __construct(\DateTimeInterface $start, \DateTimeInterface $end, bool $debug = false)
     {
         $this->start = $start;
@@ -38,53 +50,54 @@ class Importer
         $this->json = json_decode(file_get_contents($query), $assoc = true);
     }
 
+    /**
+     * Get data for room vacancies.
+     * 
+     * @return TimeVector Room vacancies in the form of time -> [available rooms].
+     */
     public function query() : TimeVector
     {
-        // initialize the time vector with all possible rooms for every index
+        // initialize time vector with all possible rooms for every index
         $rooms = $this->getRooms();
-        $times = new TimeVector($this->start, $this->end, new \DateInterval('PT15M'), $rooms);
+        $vacancies = new TimeVector($this->start, $this->end, new \DateInterval('PT15M'), $rooms);
 
-        // get events and remove rooms at those times
-        $weekCounter = clone $this->start;
+        // get events and remove rooms from vacancies when they are not available, due to an event happening in that room
+        $weekCounter = clone $this->start; // cloned to avoid changing $this->start
         while ($weekCounter < $this->end) { // in case time span is more than one week
             $week = $this->start->format('Y') . '-W' . $this->start->format('W');
 
             foreach ($this->getDays($week) as $day) {
                 foreach ($this->getEventInfos($day) as $eventInfo) {
-                    if (!isset($eventInfo['veranstaltungsort'])) 
+                    // does the event have an associated room
+                    if (!isset($eventInfo['veranstaltungsort'])) { 
                         continue;
+                    } 
                     $roomId = $eventInfo['veranstaltungsort'];
 
                     $eventId = $eventInfo['id'];
-                    try {
-                        $event = $this->makeEvent($eventId);
-                    } catch (\Exception $e) {
-                        continue;
-                    }
+                    $eventJson = $this->json['termine'][$eventId];
+                    $event = new Event($eventJson);
 
-                    if ($event->end < $times->start || $event->start > $times->end) {
+                    // does the event fall into the given time span
+                    if ($event->end < $vacancies->start || $event->start > $vacancies->end) { 
                         continue;
                     }
                     $eventTime = clone $event->start;
                     while ($eventTime < $event->end) {
-                        try {
-                            $times->remove($eventTime, $roomId);
-                        } catch (\InvalidArgumentException $e) {
-                            ;
-                        }
-                        $eventTime->add($times->offset);
+                        $vacancies->remove($eventTime, $roomId);
+                        $eventTime->add($vacancies->offset);
                     }
                 }
             }
-            $weekCounter->add(new \DateInterval('P7D'));
+            $weekCounter->add(new \DateInterval('P7D')); // increment by one week
         }
-        return $times;
+        return $vacancies;
     }
 
     /**
-     * get all available rooms that could be occupied by events
+     * Get all available rooms.
      * 
-     * @return array of Room objects
+     * @return array of Room objects.
      */
     public function getRooms() : array
     {
@@ -100,7 +113,7 @@ class Importer
             throw new \Exception("String with room data could not be acquired from $url.");
         }
 
-        // make array of Room objects out of json
+        // make array of Room objects from json
         $rooms = [];
         foreach ($json as $roomJson) {
             try {
@@ -113,32 +126,28 @@ class Importer
         return $rooms;
     }
 
+    /**
+     * Get the JSON for all days in a week.
+     * 
+     * @param string $week in the from of [Year]-W[Week-Number], e.g. 2020-W16.
+     * @return array JSON for days in week.
+     */
     private function getDays(string $week) : array
     {
-        $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage']; // exception handling
-        if (!isset($days)) return []; // temporary
+        $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage'];
+        if (!isset($days)) return [];
         return $days;
     }
 
+    /** 
+     * Get the JSON for all event stubs in a day.
+     * 
+     * @param array $day JSON for day.
+     * @return array JSON for event stubs for day.
+     */
     private function getEventInfos(array $day) : array
     {
-        if (count($day) == 0) return []; // temporary
-        return $day['termine']; // exception handling
-    }
-
-    private function makeEvent(string $eventId) : Event
-    {
-        $eventJson = $this->json['termine'][$eventId]; // exception handling
-        if (count($eventJson) == 0) throw new \Exception("event json empty"); // temporary
-
-        $eventDate = $eventJson['datum'];
-        $eventStart = $eventJson['beginn'];
-        $eventEnd = $eventJson['ende'];
-
-        $format = 'Y-m-d H:i:s';
-        $eventStartDateTime = \DateTime::createFromFormat($format, $eventDate . ' ' . $eventStart);
-        $eventEndDateTime = \DateTime::createFromFormat($format, $eventDate . ' ' . $eventEnd);
-
-        return new Event($eventStartDateTime, $eventEndDateTime);
+        if (count($day) == 0) return [];
+        return $day['termine'];
     }
 }
