@@ -280,7 +280,8 @@ function getRoomsbyBuilding(array $freerooms, string $buildingin) : array {
  * 
  * @return array
  */
-function getRoomsbyType(array $rooms, string $roomTypeIndex) : array{
+function getRoomsByType(array $rooms, string $roomTypeIndex) : array
+{
     $filteredRooms = [];
 
     $roomTypes = Importer::getRoomTypes();
