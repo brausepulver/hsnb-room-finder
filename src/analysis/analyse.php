@@ -205,7 +205,7 @@ function updateFreeRoom(array $freerooms){
  * @param array $conditions, inforamtion to limit the search by certain criteria(set by the user)
  * @return array $output, contains all available rooms which fullfill all given conditions
  */
-function getFreeRooms($start, $end, $debug = false, $conditions) :array
+function getFreeRooms($start, $end, $debug, $conditions) : array
 {
     global $importer;
     $importer = new Importer($start, $end, $debug);
@@ -216,29 +216,18 @@ function getFreeRooms($start, $end, $debug = false, $conditions) :array
     $timeID = getIDarray($importer);
     $uniqueID = getUnique1D($timeID);
     $convertedID = convertID($timeID, $uniqueID);
-    $freerooms = checkTime($minTime, $uniqueID, $convertedID);
-    //check conditions
-    $building = $conditions['building'];
-    $number = $conditions['number'];
-    $type = $conditions['type'];
 
-    // no search criteria given just returns $freerooms
-    if(empty($building) && empty($number) && empty($type)){     //later add && empty($type)
-        return $freerooms;
-    }else{
-        if(!empty($building)){
-            $output = getRoomsbyBuilding($freerooms, $building);   
-        }
-         if(!empty($number)){
-             $output = getRoomsbyNumber($freerooms, $number);
-        }
-        if(!empty($type)){
-            $output = getRoomsbyType($freerooms, $type);
-        }
-        return $output;
+    $rooms = checkTime($minTime, $uniqueID, $convertedID);
+    if (isset($conditions['room_number'])) {
+        $rooms = getRoomsbyNumber($rooms, $conditions['room_number']);
     }
-
-
+    if (isset($conditions['building_number'])) {
+        $rooms = getRoomsbyBuilding($rooms, $conditions['building_number']);
+    }
+    if (isset($conditions['room_type'])) {
+        $rooms = getRoomsByType($rooms, $conditions['room_type']);
+    }
+    return $rooms;
 }
 
 /**

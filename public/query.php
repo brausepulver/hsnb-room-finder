@@ -27,14 +27,15 @@ function getRoomsByInput() : array
 
     $roomNumberEnabled = isset($_GET['room_number_enabled']);
     $roomNumber = $_GET['room_number'];
+    if ($roomNumberEnabled) $conditions['room_number'] = $roomNumber;
 
     $buildingNumberEnabled = isset($_GET['building_number_enabled']);
     $buildingNumber = $_GET['building_number'];
+    if ($buildingNumberEnabled) $conditions['building_number'] = $buildingNumber;
 
     $roomTypeEnabled = isset($_GET['room_type_enabled']);
     $roomType = $_GET['room_type'];
-
-    $debug = false;
+    if ($roomTypeEnabled) $conditions['room_type'] = $roomType;
 
     if ($dayEnabled) {
         if ($timeframeEnabled) {
@@ -47,33 +48,7 @@ function getRoomsByInput() : array
         }
     }
 
-    if($buildingNumberEnabled){
-        $conditions['building'] = $buildingNumber;
-    }
-    else{
-        $conditions['building'] = null;
-    }
-
-    if($roomNumberEnabled = true){
-        if(!empty($roomNumber)){
-            $conditions['number'] = $roomNumber;
-        }else{
-            $conditions['number'] = null;
-        }
-    }
-    else{
-        $conditions['number'] = null;
-    }
-
-    if($roomNumberEnabled = true){
-        $conditions['type'] = $roomType;
-    }
-    else{
-        $conditions['type'] = null;
-    }
-
-
-
+    $debug = false;
 
     return getFreeRooms($start, $end, $debug, $conditions);
 }
