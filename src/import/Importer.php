@@ -150,4 +150,21 @@ class Importer
         if (count($day) == 0) return [];
         return $day['termine'];
     }
+
+    /**
+     * Get unique room types of all available rooms.
+     * 
+     * @return array Room types as strings.
+     */
+    public static function getRoomTypes()
+    {
+        $roomTypes = [
+            'Seminarraum',
+            'EDV-Labor',
+            'PC-Pool',
+            'Hörsaal',
+            'Beratung',
+        ];
+        return $roomTypes;
+    }
 }

@@ -25,44 +25,26 @@ function getRoomsByInput() : array
     $timeframeFrom = $_GET['timeframe_from'];
     $timeframeTo = $_GET['timeframe_to'];
 
-    // $minTimeEnabled = $_GET['min_time_enabled'];
-    // $minTimeIn = $_GET['min_time'];
-
     $roomNumberEnabled = isset($_GET['room_number_enabled']);
     $roomNumber = $_GET['room_number'];
 
     $buildingNumberEnabled = isset($_GET['building_number_enabled']);
     $buildingNumber = $_GET['building_number'];
 
-    $roomTypeEnabled = $_GET['room_type_enabled'];
+    $roomTypeEnabled = isset($_GET['room_type_enabled']);
     $roomType = $_GET['room_type'];
 
-    $debug = isset($_GET['debug']);
+    $debug = false;
 
-    // not applicable because checkbox values can not be read
-    // if (isset($dayEnabled)) {
-    //     if (isset($timeframeEnabled)) {
-    //         echo $timeframeFrom;
-    //         $start = new \DateTime("$day $timeframeFrom");
-    //         $end = new \DateTime("$day $timeframeTo");
-    //     } else {
-    //         echo $day;
-    //         $start = new \DateTime($day);
-    //         $end = clone $start;
-    //         $end->add(new \DateInterval('P1D'));
-    //     }
-    // }
-
-    // these are for testing purposes
-    // echo $day;
-    // echo $timeframeFrom;
-    if (!empty($timeframeFrom) && !empty($timeframeTo)) {
-        $start = new \DateTime("$day $timeframeFrom");
-        $end = new \DateTime("$day $timeframeTo");
-    } else {
-        $start = new \DateTime($day);
-        $end = clone $start;
-        $end->add(new \DateInterval('P1D'));
+    if ($dayEnabled) {
+        if ($timeframeEnabled) {
+            $start = new \DateTime("$day $timeframeFrom");
+            $end = new \DateTime("$day $timeframeTo");
+        } else {
+            $start = new \DateTime($day);
+            $end = clone $start;
+            $end->add(new \DateInterval('P1D'));
+        }
     }
 
     if($buildingNumberEnabled){
@@ -95,8 +77,6 @@ function getRoomsByInput() : array
 
     return getFreeRooms($start, $end, $debug, $conditions);
 }
-
-
 
 /**
  * Make a time from an index given in the arrays contained in the free attribute of a FreeRooms object.
@@ -133,7 +113,7 @@ function makeRoomHtml(FreeRooms $room) : string
 ?>
 
 <?php
-require_once(__DIR__ . '/form.html');
+require_once(__DIR__ . '/form.php');
 ?>
 
     <section>

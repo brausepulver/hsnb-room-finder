@@ -1,3 +1,9 @@
+<?php
+require_once(__DIR__ . '/../src/analysis/analyse.php');
+
+use Import\Importer;
+?>
+
 <html lang="de">
 <head>
     <meta charset="UTF-8">
@@ -34,7 +40,7 @@
                     <label for="timeframe_to">bis</label>
                     <input type="time" name="timeframe_to" id="timeframe_to">
                 </li>
-                <li>
+                <!-- li>
                    <span>
                        <input type="checkbox" name="min_time_enabled" id="min_time_enabled" checked disabled>
                        <label for="min_time_enabled">mindestens frei für</label> 
@@ -45,9 +51,9 @@
                         <option value="45">45 min</option>
                         <option value="60">60 min</option>
                         <option value="120">120 min</option>
-                        <!-- <option value="720">ganztägig</option> -->
+                        <option value="720">ganztägig</option>
                    </select>
-                </li>
+                </li -->
                 <li>
                     <span>
                         <input type="checkbox" name="room_number_enabled" id="room_number_enabled">
@@ -73,18 +79,12 @@
                         <label for="room_type_enabled">Raum-Art</label>
                     </span>
                     <select name="room_type" id="room_type">
-                        <option value="seminar">Seminar</option>
-                        <option value="pc">PC-Pool</option>
-                        <option value="rsaal">Hörsaal</option>
-                        <option value="labor">Labor</option>
+<?php
+for ($i = 1, $roomTypes = Importer::getRoomTypes(); $i < count($roomTypes); $i++) {
+    echo "<option value=\"$i\">" . $roomTypes[$i] . '</option>';
+}
+?>
                     </select>
-                </li>
-                <li>
-                    <span>
-                        <label for="debug">Debug</label>
-                        <input type="checkbox" name="debug" id="debug" checked>
-                    </span>
-                    <input type="submit" value="Suchen">
                 </li>
             </ul>
         </form>
