@@ -80,7 +80,7 @@ use Import\Importer;
                     </span>
                     <select name="room_type" id="room_type">
 <?php
-for ($i = 1, $roomTypes = Importer::getRoomTypes(); $i < count($roomTypes); $i++) {
+for ($i = 0, $roomTypes = Importer::getRoomTypes(); $i < count($roomTypes); $i++) {
     echo "<option value=\"$i\">" . $roomTypes[$i] . '</option>';
 }
 ?>
