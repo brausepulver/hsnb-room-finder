@@ -38,57 +38,6 @@ class Room
         $this->occupiedTimeFrames[] = [$event->start, $event->end];
     }
 
-    // public function getAvailableTimeFrames2(\DateTimeInterface $start, \DateTimeInterface $finish)
-    // {
-    //     $occupied = false;
-    //     $occupiedOn = [];
-    //     $availableOn = [];
-    //     $timeFramesBuffer = $this->occupiedTimeFrames;
-
-    //     $interval = new \DateInterval('PT15M');
-    //     $i = clone $start; $j;
-
-    //     while ($i < $finish) {
-    //         for ($k = 0; $k < count($occupiedOn); $k++) {
-    //             if ($occupiedOn[$k][1] <= $i) {
-    //                 unset($occupiedOn[$k]);
-    //                 $occupiedOn = array_values($occupiedOn);
-    //             }
-    //         }
-    //         for ($k = 0; $k < count($timeFramesBuffer); $k++) {
-    //             $timeFrame = $timeFramesBuffer[$k];
-    //             if ($timeFrame[0] <= $i && $timeFrame[1] > $i) {
-    //                 $occupiedOn[] = $timeFrame;
-    //                 unset($timeFramesBuffer[$k]);
-    //                 $timeFramesBuffer = array_values($timeFramesBuffer);
-    //             }
-    //         }
-    //         $initialized = count($availableOn) > 0;
-    //         $s = $initialized ? count($availableOn[count($availableOn)-1]) : 0;
-
-    //         if (count($occupiedOn) === 0) $occupied = false;
-    //         else {
-    //             if ($initialized && $s === 1) {
-    //                 $availableOn[count($availableOn)-1][1] = $j;
-    //             }
-    //             $occupied = true;
-    //         }
-
-    //         if (!$occupied) {
-    //             if (!$initialized || $s == 2) {
-    //                 $availableOn[] = [clone $i];
-    //                 $j = clone $i;
-    //             }
-    //             $j->add($interval);
-    //         }
-    //         $i->add($interval);
-    //         if ($i >= $finish && $s == 1) {
-    //             $availableOn[count($availableOn)-1][1] = $j;
-    //         }
-    //     }
-    //     return $availableOn;
-    // }
-
     public function getAvailableTimeFrames(\DateTimeInterface $start, \DateTimeInterface $finish)
     {
         $interval = new \DateInterval('PT15M');
