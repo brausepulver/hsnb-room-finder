@@ -22,7 +22,8 @@ class Importer
     private $options;
 
     /**
-     * Construct an Importer object used to import room and room vacancy data.
+     * Construct an Importer object. 
+     * Used to import room and room vacancy data.
      * 
      * @param \DateTimeInterface $start Time from which to start import.
      * @param \DateTimeInterace $end Time at which to end import.
@@ -55,11 +56,10 @@ class Importer
      * 
      * @return TimeVector Room vacancies in the form of time -> [available rooms].
      */
-    public function query() : TimeVector
+    public function getAvailableRooms() : array
     {
         // initialize time vector with all possible rooms for every index
         $rooms = $this->getRooms();
-        $vacancies = new TimeVector($this->start, $this->end, new \DateInterval('PT15M'), $rooms);
 
         // get events and remove rooms from vacancies when they are not available, due to an event happening in that room
         $weekCounter = clone $this->start; // cloned to avoid changing $this->start
@@ -79,19 +79,40 @@ class Importer
                     $event = new Event($eventJson);
 
                     // does the event fall into the given time span
-                    if ($event->end < $vacancies->start || $event->start > $vacancies->end) { 
+                    if ($event->end < $this->start || $event->start > $this->end) { 
                         continue;
                     }
-                    $eventTime = clone $event->start;
-                    while ($eventTime < $event->end) {
-                        $vacancies->remove($eventTime, $roomId);
-                        $eventTime->add($vacancies->offset);
-                    }
+                    $rooms[$roomId]->occupy($event);
                 }
             }
             $weekCounter->add(new \DateInterval('P7D')); // increment by one week
         }
-        return $vacancies;
+        return $rooms;
+    }
+
+    public function getFilteredRooms(array $conditions) : array
+    {
+        $rooms = $this->getAvailableRooms();
+        $filteredRooms = [];
+
+        if (isset($conditions['room_type'])) {
+            $roomTypes = Importer::getRoomTypes();
+            $roomType = $roomTypes[$roomTypeIndex];
+        }
+
+        foreach ($rooms as $room) {
+            if (isset($conditions['room_number'])) {
+                if ($conditions['room_number'] !== $room->number) continue;
+            }
+            if (isset($conditions['building_number'])) {
+                if ($conditions['building_number'] !== $room->building) continue;
+            }
+            if (isset($conditions['room_type'])) {
+                if (strpos($room->name, $roomType) === false) continue;
+            }
+            $filteredRooms[] = $room;
+        }
+        return $rooms;
     }
 
     /**

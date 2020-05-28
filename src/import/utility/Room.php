@@ -13,7 +13,7 @@ class Room
     public $number;
     public $building;
 
-    public $free;
+    private $occupiedTimeFrames;
 
     public function __construct($json)
     {
@@ -24,10 +24,113 @@ class Room
 
         $this->building = substr($this->shortName, 2, 1);
         $this->number = substr($this->shortName, 4);
+
+        $this->occupiedTimeFrames = [];
     }
 
     public function __toString()
     {
         return $this->shortName;
+    }
+
+    public function occupy(Event $event)
+    {
+        $this->occupiedTimeFrames[] = [$event->start, $event->end];
+    }
+
+    // public function getAvailableTimeFrames2(\DateTimeInterface $start, \DateTimeInterface $finish)
+    // {
+    //     $occupied = false;
+    //     $occupiedOn = [];
+    //     $availableOn = [];
+    //     $timeFramesBuffer = $this->occupiedTimeFrames;
+
+    //     $interval = new \DateInterval('PT15M');
+    //     $i = clone $start; $j;
+
+    //     while ($i < $finish) {
+    //         for ($k = 0; $k < count($occupiedOn); $k++) {
+    //             if ($occupiedOn[$k][1] <= $i) {
+    //                 unset($occupiedOn[$k]);
+    //                 $occupiedOn = array_values($occupiedOn);
+    //             }
+    //         }
+    //         for ($k = 0; $k < count($timeFramesBuffer); $k++) {
+    //             $timeFrame = $timeFramesBuffer[$k];
+    //             if ($timeFrame[0] <= $i && $timeFrame[1] > $i) {
+    //                 $occupiedOn[] = $timeFrame;
+    //                 unset($timeFramesBuffer[$k]);
+    //                 $timeFramesBuffer = array_values($timeFramesBuffer);
+    //             }
+    //         }
+    //         $initialized = count($availableOn) > 0;
+    //         $s = $initialized ? count($availableOn[count($availableOn)-1]) : 0;
+
+    //         if (count($occupiedOn) === 0) $occupied = false;
+    //         else {
+    //             if ($initialized && $s === 1) {
+    //                 $availableOn[count($availableOn)-1][1] = $j;
+    //             }
+    //             $occupied = true;
+    //         }
+
+    //         if (!$occupied) {
+    //             if (!$initialized || $s == 2) {
+    //                 $availableOn[] = [clone $i];
+    //                 $j = clone $i;
+    //             }
+    //             $j->add($interval);
+    //         }
+    //         $i->add($interval);
+    //         if ($i >= $finish && $s == 1) {
+    //             $availableOn[count($availableOn)-1][1] = $j;
+    //         }
+    //     }
+    //     return $availableOn;
+    // }
+
+    public function getAvailableTimeFrames(\DateTimeInterface $start, \DateTimeInterface $finish)
+    {
+        $interval = new \DateInterval('PT15M');
+        $v = new TimeVector($start, $finish, $interval, true);
+
+        if (count($this->occupiedTimeFrames) === 0) {
+            return [ [clone $start, clone $finish] ];
+        }
+        foreach ($this->occupiedTimeFrames as $timeFrame) {
+            for ($i = clone $timeFrame[0]; $i < $timeFrame[1]; $i->add($interval)) {
+                $v->set($i, false);
+            }
+        }
+        $available = $v->toArray(); $availableOn = [];
+
+        for ($i = 0, $j; $i < count($available); $i++) {
+            $s = count($availableOn) > 0 ? count($availableOn[count($availableOn)-1]) : 0;
+
+            if ($available[$i]) {
+                if ($s === 2 || $s == 0) {
+                    $availableOn[] = [$this->indexToTime($start, $i)];
+                    $j = $this->indexToTime($start, $i);
+                }
+                $j->add($interval);
+            }
+            if ((!$available[$i] || $i === count($available)-1) && $s === 1) {
+                $availableOn[count($availableOn)-1][1] = $j;
+            }
+        }
+        return $availableOn;
+    }
+
+    /**
+     * Make a time from an index given in the arrays contained in the free attribute of a FreeRooms object.
+     * The indices are counted in 15 minute steps by default.
+     * 
+     * @param \DateTimeInterface $start, the timestamp at which the FreeRooms object begins counting.
+     * @param int $index, representing one specific time.
+     * @return \DateTimeInterface corresponding to the index added to the starting time.
+     */
+    private function indexToTime(\DateTimeInterface $start, int $index)
+    {
+        return (clone $start)->add(new \DateInterval('PT' . $index * 15 . 'M'));
     }
 }

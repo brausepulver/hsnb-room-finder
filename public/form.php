@@ -1,5 +1,5 @@
 <?php
-require_once(__DIR__ . '/../src/analysis/analyse.php');
+require_once(__DIR__ . '/../src/import/Importer.php');
 
 use Import\Importer;
 ?>
@@ -12,6 +12,7 @@ use Import\Importer;
     <meta name="author" content="Florian Leder">
     <title>Raum-Finder</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">
 </head>
 <body>
     <h2>Raum-Finder</h2>

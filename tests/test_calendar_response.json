@@ -18,11 +18,11 @@
                             },
                             "2": {
                                 "id": "2",
-                                "veranstaltungsort": "12"
+                                "veranstaltungsort": "11"
                             },
                             "3": {
                                 "id": "3",
-                                "veranstaltungsort": "13"
+                                "veranstaltungsort": "11"
                             }
                         }
                     },
@@ -66,13 +66,13 @@
             "id": "1",
             "datum": "2020-04-14",
             "beginn": "07:45:00",
-            "ende": "09:00:00"
+            "ende": "08:30:00"
         },
         "2": {
             "id": "2",
             "datum": "2020-04-14",
-            "beginn": "08:45:00",
-            "ende": "09:30:00"
+            "beginn": "09:00:00",
+            "ende": "09:15:00"
         },
         "3": {
             "id": "3",

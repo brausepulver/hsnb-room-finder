@@ -1,5 +1,5 @@
 <?php declare(strict_types=1);
-require_once(__DIR__ . '/../src/analysis/analyse.php');
+require_once(__DIR__ . '/../src/import/Importer.php');
 
 use Import\Importer;
 
@@ -53,21 +53,9 @@ function getRoomsByInput() : array
     if ($roomTypeEnabled) $conditions['room_type'] = $roomType;
 
     $debug = false;
+    $importer = new Importer($start, $end, $debug);
 
-    return getFreeRooms($start, $end, $debug, $conditions);
-}
-
-/**
- * Make a time from an index given in the arrays contained in the free attribute of a FreeRooms object.
- * The indices are counted in 15 minute steps by default.
- * 
- * @param \DateTimeInterface $start, the timestamp at which the FreeRooms object begins counting.
- * @param int $index, representing one specific time.
- * @return \DateTimeInterface corresponding to the index added to the starting time.
- */
-function indexToTime(\DateTimeInterface $start, int $index)
-{
-    return $start->add(new \DateInterval('PT' . $index * 15 . 'M'));
+    return $importer->getFilteredRooms($conditions);
 }
 
 /**
@@ -76,16 +64,16 @@ function indexToTime(\DateTimeInterface $start, int $index)
  * @param FreeRooms $room
  * @return string HTML
  */
-function makeRoomHtml(FreeRooms $room) : string
+function makeRoomHtml(Import\Utility\Room $room) : string
 {
-    global $start;
+    global $start, $end;
 
-    $ret = "Raum: $room->number (Haus $room->building), $room->info";
-    foreach ($room->free as $timeInterval) {
+    $ret = "Raum: $room->number (Haus $room->building), $room->name";
+    foreach ($room->getAvailableTimeFrames($start, $end) as $timeInterval) {
         $ret .= ', ';
-        $ret .= indexToTime(clone $start, $timeInterval[0])->format('H:i:s');
+        $ret .= $timeInterval[0]->format('H:i:s');
         $ret .= ' bis ';
-        $ret .= indexToTime(clone $start, $timeInterval[1])->format('H:i:s');
+        $ret .= $timeInterval[1]->format('H:i:s');
     }
     return $ret;
 }
@@ -99,11 +87,20 @@ require_once(__DIR__ . '/form.php');
         <h3>Ergebnisse</h3>
         <ul id="results">
 <?php
-$rooms = getRoomsByInput();
-foreach ($rooms as $room) {
-    echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+$tsum = 0; $c = 20;
+for ($i = 0; $i < $c; $i++) {
+    $time = -microtime(true);
+    $rooms = getRoomsByInput();
+    echo count($rooms) > 0 ? '' : '?';
+    // foreach ($rooms as $room) {
+    //     echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+    // }
+    $time += microtime(true);
+    $tsum += $time;
+    $time = 0;
 }
-            ?>
+echo $tsum / $c . ' ms taken on average';
+?>
         </ul>
     </section>
 
