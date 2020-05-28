@@ -6,6 +6,15 @@ use Import\Importer;
 $start; // global variables are used to make start available in makeRoomHtml()
 $end;
 
+/* Die $view Variable könnte dazu dienen, den Modus auszuwählen, wie die Räume angezeigt werden sollen.
+   Eine Auswahl müsste in form.php eingebaut werden. */
+$viewOptions = [
+    'single_day',
+    'single_day_week',
+    'week'
+];
+$view = $viewOptions[0]; // Standard
+
 /**
  * Get all free rooms specified by the data entered by the user.
  * The method of choice is GET, to make the query RESTful.
@@ -59,6 +68,21 @@ function getRoomsByInput() : array
 }
 
 /**
+ * Die Standard-Ansicht die wir bis jetzt hatten, nur in einer extra Funktion.
+ * 
+ * @return string $html
+ */
+function makeSingleDayView() : string
+{
+    $rooms = getRoomsByInput();
+    $html = '';
+    foreach ($rooms as $room) {
+        $html .= '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+    }
+    return $html;
+}
+
+/**
  * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über mehrere Wochen,
  * und immer am gleichen Wochentag. (z.B. Montag über das gesamte Semester)
  * 
@@ -70,7 +94,7 @@ function getRoomsByInput() : array
  * Auch ist die Frage, ob verschiedene Importer angelegt werden sollen um die Events an verschiedenen Tagen abzufragen, 
  * oder ob alle Events in die jeweiligen Räume eingelesen werden sollen, und dann abgefragt.
  */
-function makeSingleDayWeekView(int $weekCount)
+function makeSingleDayWeekView(int $weekCount) : string
 {
     /* Ersetzen und entsprechend implementieren.
        Es könnte wie in der Importer Klasse ein Counter die Wochen durchlaufen, 
@@ -91,7 +115,7 @@ function makeSingleDayWeekView(int $weekCount)
  * @param int $weekCount Anzahl der anzuzeigenden Wochen.
  * @return string HTML
  */
-function makeWeekView(int $weekCount)
+function makeWeekView(int $weekCount) : string
 {
     ;
 }
@@ -102,7 +126,7 @@ function makeWeekView(int $weekCount)
  * @param Room $room
  * @return string HTML
  */
-function makeRoomHtml(Import\Utility\Room $room) : string
+function makeRoomView(Import\Utility\Room $room) : string
 {
     global $start, $end;
 
@@ -122,7 +146,7 @@ function makeRoomHtml(Import\Utility\Room $room) : string
  * @param Room $room
  * @return string HTML
  */
-function makeTableView(Import\Utility\Room $room) : string
+function makeRoomTableView(Import\Utility\Room $room) : string
 {
     ;
 }
@@ -136,9 +160,8 @@ require_once(__DIR__ . '/form.php');
         <h3>Ergebnisse</h3>
         <ul id="results">
 <?php
-$rooms = getRoomsByInput();
-foreach ($rooms as $room) {
-    echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+if ($view === 'single_day') {
+    echo makeSingleDayView();
 }
 ?>
         </ul>
