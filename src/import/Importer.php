@@ -51,43 +51,41 @@ class Importer
         $this->json = json_decode(file_get_contents($query), $assoc = true);
     }
 
-    /**
-     * Get data for room vacancies.
-     * 
-     * @return TimeVector Room vacancies in the form of time -> [available rooms].
-     */
     public function getAvailableRooms() : array
     {
-        // initialize time vector with all possible rooms for every index
         $rooms = $this->getRooms();
 
-        // get events and remove rooms from vacancies when they are not available, due to an event happening in that room
-        $weekCounter = clone $this->start; // cloned to avoid changing $this->start
+        $weekCounter = clone $this->start;
         while ($weekCounter < $this->end) { // in case time span is more than one week
             $week = $this->start->format('Y') . '-W' . $this->start->format('W');
 
-            foreach ($this->getDays($week) as $day) {
-                foreach ($this->getEventInfos($day) as $eventInfo) {
-                    // does the event have an associated room
-                    if (!isset($eventInfo['veranstaltungsort'])) { 
-                        continue;
-                    } 
-                    $roomId = $eventInfo['veranstaltungsort'];
-
-                    $eventId = $eventInfo['id'];
-                    $eventJson = $this->json['termine'][$eventId];
-                    $event = new Event($eventJson);
-
-                    // does the event fall into the given time span
-                    if ($event->end < $this->start || $event->start > $this->end) { 
-                        continue;
-                    }
-                    $rooms[$roomId]->occupy($event);
-                }
-            }
+            $this->processWeek($week, $rooms);
             $weekCounter->add(new \DateInterval('P7D')); // increment by one week
         }
         return $rooms;
+    }
+
+    private function processWeek(string $week, array $rooms)
+    {
+        foreach ($this->getDays($week) as $day) {
+            foreach ($this->getEventInfos($day) as $eventInfo) {
+                // does the event have an associated room
+                if (!isset($eventInfo['veranstaltungsort'])) { 
+                    continue;
+                } 
+                $roomId = $eventInfo['veranstaltungsort'];
+
+                $eventId = $eventInfo['id'];
+                $eventJson = $this->json['termine'][$eventId];
+                $event = new Event($eventJson);
+
+                // does the event fall into the given time span
+                if ($event->end < $this->start || $event->start > $this->end) { 
+                    continue;
+                }
+                $rooms[$roomId]->occupy($event);
+            }
+        }
     }
 
     public function getFilteredRooms(array $conditions) : array
@@ -96,27 +94,31 @@ class Importer
         $filteredRooms = [];
 
         if (isset($conditions['room_type'])) {
-            $roomTypes = Importer::getRoomTypes();
-            $roomType = $roomTypes[$roomTypeIndex];
+            $roomTypes = self::getRoomTypes();
+            $roomType = $roomTypes[$conditions['room_type']];
         }
-
         foreach ($rooms as $room) {
-            if (isset($conditions['room_number'])) {
-                if ($conditions['room_number'] !== $room->number) continue;
-            }
-            if (isset($conditions['building_number'])) {
-                if ($conditions['building_number'] !== $room->building) continue;
-            }
-            if (isset($conditions['room_type'])) {
-                if (strpos($room->name, $roomType) === false) continue;
-            }
-            $filteredRooms[] = $room;
+            if ($this->checkRoom($room, $conditions)) $filteredRooms[] = $room;
         }
         return $rooms;
     }
 
+    private function checkRoom(Room $room, array $conditions) : bool
+    {
+        if (isset($conditions['room_number'])) {
+            if ($conditions['room_number'] !== $room->number) return false;
+        }
+        if (isset($conditions['building_number'])) {
+            if ($conditions['building_number'] !== $room->building) return false;
+        }
+        if (isset($conditions['room_type'])) {
+            if (strpos($room->name, $roomType) === false) return false;
+        }
+        return true;
+    }
+
     /**
-     * Get all available rooms.
+     * Get all possible rooms.
      * 
      * @return array of Room objects.
      */
@@ -173,7 +175,7 @@ class Importer
     }
 
     /**
-     * Get unique room types of all available rooms.
+     * Get unique room types of all possible rooms.
      * 
      * @return array Room types as strings.
      */
