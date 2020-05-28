@@ -44,7 +44,7 @@ class Room
         $v = new TimeVector($start, $finish, $interval, true);
 
         /* Wenn keine Events für den Raum gespeichert wurden, ist occupiedTimeFrames leer.
-           Ich gebe also die Start- und End-Zeit der Anfrage zurück. (z.b. 08:00 bis 20:00 Uhr) */
+           Ich gebe also die Start- und End-Zeit der Anfrage zurück. (z.B. 08:00 bis 20:00 Uhr) */
         if (count($this->occupiedTimeFrames) === 0) {
             return [ [clone $start, clone $finish] ];
         }
@@ -85,14 +85,6 @@ class Room
         return $availableOn;
     }
 
-    /**
-     * Make a time from an index given in the arrays contained in the free attribute of a FreeRooms object.
-     * The indices are counted in 15 minute steps by default.
-     * 
-     * @param \DateTimeInterface $start, the timestamp at which the FreeRooms object begins counting.
-     * @param int $index, representing one specific time.
-     * @return \DateTimeInterface corresponding to the index added to the starting time.
-     */
     private function indexToTime(\DateTimeInterface $start, int $index)
     {
         return (clone $start)->add(new \DateInterval('PT' . $index * 15 . 'M'));
