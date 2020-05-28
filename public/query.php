@@ -59,9 +59,47 @@ function getRoomsByInput() : array
 }
 
 /**
- * Represent a FreeRooms object in HTML.
+ * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über mehrere Wochen,
+ * und immer am gleichen Wochentag. (z.B. Montag über das gesamte Semester)
  * 
- * @param FreeRooms $room
+ * @param int $weekCount Anzahl der anzuzeigenden Wochen.
+ * @return string HTML
+ * 
+ * Weitere Parameter wären möglich, wie z.B. Intervall (ob nur alle 2 Wochen angezeigt werden soll).
+ * 
+ * Auch ist die Frage, ob verschiedene Importer angelegt werden sollen um die Events an verschiedenen Tagen abzufragen, 
+ * oder ob alle Events in die jeweiligen Räume eingelesen werden sollen, und dann abgefragt.
+ */
+function makeSingleDayWeekView(int $weekCount)
+{
+    /* Ersetzen und entsprechend implementieren.
+       Es könnte wie in der Importer Klasse ein Counter die Wochen durchlaufen, 
+       und zum gleichen Wochentag die Räume mittels $room->getAvailableTimeFrames($start + k*week, $end + k*week) abfragen. */
+    $rooms = getRoomsByInput();
+    $html = '';
+
+    foreach ($rooms as $room) {
+        $html .= '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+    }
+    return $html;
+}
+
+/**
+ * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über eine oder mehrere Wochen,
+ * aber Darstellung aller Wochentage, außer Sonnabend und Sonntag.
+ * 
+ * @param int $weekCount Anzahl der anzuzeigenden Wochen.
+ * @return string HTML
+ */
+function makeWeekView(int $weekCount)
+{
+    ;
+}
+
+/**
+ * Darstellen eines Room Objekts in HTML.
+ * 
+ * @param Room $room
  * @return string HTML
  */
 function makeRoomHtml(Import\Utility\Room $room) : string
@@ -76,6 +114,17 @@ function makeRoomHtml(Import\Utility\Room $room) : string
         $ret .= $timeInterval[1]->format('H:i:s');
     }
     return $ret;
+}
+
+/**
+ * Darstellen eines Room Objekts in einer HTML Tabellenansicht.
+ * 
+ * @param Room $room
+ * @return string HTML
+ */
+function makeTableView(Import\Utility\Room $room) : string
+{
+    ;
 }
 ?>
 
