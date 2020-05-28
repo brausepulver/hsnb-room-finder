@@ -87,19 +87,10 @@ require_once(__DIR__ . '/form.php');
         <h3>Ergebnisse</h3>
         <ul id="results">
 <?php
-$tsum = 0; $c = 20;
-for ($i = 0; $i < $c; $i++) {
-    $time = -microtime(true);
-    $rooms = getRoomsByInput();
-    echo count($rooms) > 0 ? '' : '?';
-    // foreach ($rooms as $room) {
-    //     echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
-    // }
-    $time += microtime(true);
-    $tsum += $time;
-    $time = 0;
+$rooms = getRoomsByInput();
+foreach ($rooms as $room) {
+    echo '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
 }
-echo $tsum / $c . ' ms taken on average';
 ?>
         </ul>
     </section>
