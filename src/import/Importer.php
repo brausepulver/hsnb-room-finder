@@ -10,7 +10,8 @@ class Importer
 {
     /* Files from which configuration data will be loaded. A configuration file contains calendar_base and rooms_base URLs.
        $CONFIG_PATH configuration is for regular operation. 
-       $DEBUG_CONFIG_PATH configuration is for debug operation. It is used if the $debug variable in the constructor is set to true.
+       $DEBUG_CONFIG_PATH configuration is for debug operation. 
+       It is used if the $debug variable in the constructor is set to true.
        It makes the object use test data located at tests/test_calendar_response.json and tests/test_room_response.json.
        */
     public static $CONFIG_PATH = __DIR__ . '/config.json';
@@ -93,18 +94,19 @@ class Importer
         $rooms = $this->getAvailableRooms();
         $filteredRooms = [];
 
-        if (isset($conditions['room_type'])) {
-            $roomTypes = self::getRoomTypes();
-            $roomType = $roomTypes[$conditions['room_type']];
-        }
         foreach ($rooms as $room) {
             if ($this->checkRoom($room, $conditions)) $filteredRooms[] = $room;
         }
-        return $rooms;
+        return $filteredRooms;
     }
 
     private function checkRoom(Room $room, array $conditions) : bool
     {
+        $roomType = '';
+        if (isset($conditions['room_type'])) {
+            $roomTypes = self::getRoomTypes();
+            $roomType = $roomTypes[$conditions['room_type']];
+        }
         if (isset($conditions['room_number'])) {
             if ($conditions['room_number'] !== $room->number) return false;
         }
