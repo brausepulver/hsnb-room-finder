@@ -77,7 +77,7 @@ function makeSingleDayView() : string
     $rooms = getRoomsByInput();
     $html = '';
     foreach ($rooms as $room) {
-        $html .= '<li>' . makeRoomHtml($room) . '</li>' . PHP_EOL;
+        $html .= '<li>' . makeRoomView($room) . '</li>' . PHP_EOL;
     }
     return $html;
 }
@@ -93,6 +93,8 @@ function makeSingleDayView() : string
  * 
  * Auch ist die Frage, ob verschiedene Importer angelegt werden sollen um die Events an verschiedenen Tagen abzufragen, 
  * oder ob alle Events in die jeweiligen Räume eingelesen werden sollen, und dann abgefragt.
+ * 
+ * Die Darstellung könnte durch mehrere Tabellen nebeneinander, oder durch Tabs erfolgen.
  */
 function makeSingleDayWeekView(int $weekCount) : string
 {
