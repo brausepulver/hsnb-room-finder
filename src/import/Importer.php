@@ -10,7 +10,8 @@ class Importer
 {
     /* Files from which configuration data will be loaded. A configuration file contains calendar_base and rooms_base URLs.
        $CONFIG_PATH configuration is for regular operation. 
-       $DEBUG_CONFIG_PATH configuration is for debug operation. It is used if the $debug variable in the constructor is set to true.
+       $DEBUG_CONFIG_PATH configuration is for debug operation. 
+       It is used if the $debug variable in the constructor is set to true.
        It makes the object use test data located at tests/test_calendar_response.json and tests/test_room_response.json.
        */
     public static $CONFIG_PATH = __DIR__ . '/config.json';
@@ -22,7 +23,8 @@ class Importer
     private $options;
 
     /**
-     * Construct an Importer object used to import room and room vacancy data.
+     * Construct an Importer object. 
+     * Used to import room and room vacancy data.
      * 
      * @param \DateTimeInterface $start Time from which to start import.
      * @param \DateTimeInterace $end Time at which to end import.
@@ -50,52 +52,75 @@ class Importer
         $this->json = json_decode(file_get_contents($query), $assoc = true);
     }
 
-    /**
-     * Get data for room vacancies.
-     * 
-     * @return TimeVector Room vacancies in the form of time -> [available rooms].
-     */
-    public function query() : TimeVector
+    public function getAvailableRooms() : array
     {
-        // initialize time vector with all possible rooms for every index
         $rooms = $this->getRooms();
-        $vacancies = new TimeVector($this->start, $this->end, new \DateInterval('PT15M'), $rooms);
 
-        // get events and remove rooms from vacancies when they are not available, due to an event happening in that room
-        $weekCounter = clone $this->start; // cloned to avoid changing $this->start
+        $weekCounter = clone $this->start;
         while ($weekCounter < $this->end) { // in case time span is more than one week
             $week = $this->start->format('Y') . '-W' . $this->start->format('W');
 
-            foreach ($this->getDays($week) as $day) {
-                foreach ($this->getEventInfos($day) as $eventInfo) {
-                    // does the event have an associated room
-                    if (!isset($eventInfo['veranstaltungsort'])) { 
-                        continue;
-                    } 
-                    $roomId = $eventInfo['veranstaltungsort'];
-
-                    $eventId = $eventInfo['id'];
-                    $eventJson = $this->json['termine'][$eventId];
-                    $event = new Event($eventJson);
-
-                    // does the event fall into the given time span
-                    if ($event->end < $vacancies->start || $event->start > $vacancies->end) { 
-                        continue;
-                    }
-                    $eventTime = clone $event->start;
-                    while ($eventTime < $event->end) {
-                        $vacancies->remove($eventTime, $roomId);
-                        $eventTime->add($vacancies->offset);
-                    }
-                }
-            }
+            $this->processWeek($week, $rooms);
             $weekCounter->add(new \DateInterval('P7D')); // increment by one week
         }
-        return $vacancies;
+        return $rooms;
+    }
+
+    private function processWeek(string $week, array $rooms)
+    {
+        foreach ($this->getDays($week) as $day) {
+            foreach ($this->getEventInfos($day) as $eventInfo) {
+                // does the event have an associated room
+                if (!isset($eventInfo['veranstaltungsort'])) { 
+                    continue;
+                } 
+                $roomId = $eventInfo['veranstaltungsort'];
+
+                $eventId = $eventInfo['id'];
+                $eventJson = $this->json['termine'][$eventId];
+                $event = new Event($eventJson);
+
+                // does the event fall into the given time span
+                if ($event->end < $this->start || $event->start > $this->end) { 
+                    continue;
+                }
+                $rooms[$roomId]->occupy($event);
+            }
+        }
+    }
+
+    public function getFilteredRooms(array $conditions) : array
+    {
+        $rooms = $this->getAvailableRooms();
+        $filteredRooms = [];
+
+        foreach ($rooms as $room) {
+            if ($this->checkRoom($room, $conditions)) $filteredRooms[] = $room;
+        }
+        return $filteredRooms;
+    }
+
+    private function checkRoom(Room $room, array $conditions) : bool
+    {
+        $roomType = '';
+        if (isset($conditions['room_type'])) {
+            $roomTypes = self::getRoomTypes();
+            $roomType = $roomTypes[$conditions['room_type']];
+        }
+        if (isset($conditions['room_number'])) {
+            if ($conditions['room_number'] !== $room->number) return false;
+        }
+        if (isset($conditions['building_number'])) {
+            if ($conditions['building_number'] !== $room->building) return false;
+        }
+        if (isset($conditions['room_type'])) {
+            if (strpos($room->name, $roomType) === false) return false;
+        }
+        return true;
     }
 
     /**
-     * Get all available rooms.
+     * Get all possible rooms.
      * 
      * @return array of Room objects.
      */
@@ -152,7 +177,7 @@ class Importer
     }
 
     /**
-     * Get unique room types of all available rooms.
+     * Get unique room types of all possible rooms.
      * 
      * @return array Room types as strings.
      */
