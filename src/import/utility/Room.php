@@ -98,7 +98,7 @@ class Room
      * 
      * @return int Ganzzahl, die < 0 wenn Raum $a kleiner als Raum $b, 
      *                           = 0 wenn Raum $a gleich Raum $b und
-     *                           > 0 wenn Raumm $a größer als Raum $b.
+     *                           > 0 wenn Raum $a größer als Raum $b.
      */
     public static function compareRoom(Room $a, Room $b) : int
     {
