@@ -1,7 +1,9 @@
 <?php declare(strict_types=1);
 require_once(__DIR__ . '/../src/import/Importer.php');
+require_once(__DIR__ . '/../src/ui/Options.php');
 
 use Import\Importer;
+use UI\Options;
 
 $start; // global variables are used to make start available in makeRoomHtml()
 $end;
@@ -25,41 +27,11 @@ $view = $viewOptions[0]; // Standard
 function getRoomsByInput() : array
 {
     global $start, $end;
-    $conditions = [];
-
-    $dayEnabled = isset($_GET['day_enabled']);
-    $day = $_GET['day'];
-
-    $timeframeEnabled = isset($_GET['timeframe_enabled']);
-    $timeframeFrom = $_GET['timeframe_from'];
-    $timeframeTo = $_GET['timeframe_to'];
-
-    if ($dayEnabled && !empty($day)) {
-        if ($timeframeEnabled && !empty($timeframeFrom) && !empty($timeframeTo)) {
-            $start = new \DateTime("$day $timeframeFrom");
-            $end = new \DateTime("$day $timeframeTo");
-        } else {
-            $start = new \DateTime($day);
-            $end = clone $start;
-            $end->add(new \DateInterval('P1D'));
-        }
-    } else {
-        $start = new \DateTime('today');
-        $end = clone $start;
-        $end->add(new \DateInterval('P1D'));
-    }
-
-    $roomNumberEnabled = isset($_GET['room_number_enabled']);
-    $roomNumber = $_GET['room_number'];
-    if ($roomNumberEnabled) $conditions['room_number'] = $roomNumber;
-
-    $buildingNumberEnabled = isset($_GET['building_number_enabled']);
-    $buildingNumber = $_GET['building_number'];
-    if ($buildingNumberEnabled) $conditions['building_number'] = $buildingNumber;
-
-    $roomTypeEnabled = isset($_GET['room_type_enabled']);
-    $roomType = $_GET['room_type'];
-    if ($roomTypeEnabled) $conditions['room_type'] = $roomType;
+    
+    $options = new Options();
+    $start = $options->getStart();
+    $end = $options->getFinish();
+    $conditions = $options->getConditions();
 
     $debug = false;
     $importer = new Importer($start, $end, $debug);
