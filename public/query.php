@@ -39,7 +39,38 @@ function getRoomsByInput() : array
 
     $rooms = $importer->getFilteredRooms($conditions);
     // Räume sortieren
-    if (usort($rooms, ['Import\\Utility\\Room', 'compareRoom'])) {
+    // if (usort($rooms, ['Import\\Utility\\Room', 'compareRoom'])) {
+    //     return $rooms;
+    // } else {
+    //     return $rooms;
+    // }
+    // Gebäude sortieren
+    if (usort($rooms, ['Import\\Utility\\Room', 'compareBuilding'])) {//array mit room obj
+        $haus1 = [];
+        $haus2 = [];
+        $haus3 = [];
+        $haus4 = [];
+        foreach ($rooms as $room){
+            if ($room->building == '1') {
+                $haus1[] = $room;
+            }
+            if($room->building == '2') {
+                $haus2[] = $room;
+            }
+            if($room->building == '3'){
+                $haus3[] = $room;
+            }
+            if($room->building == '4'){
+                $haus4[] = $room;
+            } else {
+                continue;
+            }
+        }
+        usort($haus1, ['Import\\Utility\\Room', 'compareRoom']);
+        usort($haus2, ['Import\\Utility\\Room', 'compareRoom']);
+        usort($haus3, ['Import\\Utility\\Room', 'compareRoom']);
+        usort($haus4, ['Import\\Utility\\Room', 'compareRoom']);
+        $rooms = array_merge($haus1, $haus2, $haus3, $haus4);
         return $rooms;
     } else {
         return $rooms;
