@@ -159,23 +159,22 @@ function makeRoomTableView(Import\Utility\Room $room) : string
     global $start, $end;
 
     ob_start(); 
-    ?> <table>
-        <tr>
-            <td>
-                <?php echo "Raum: $room->number (Haus $room->building)"; ?><br>
-                <?php echo "Info: $room->name"; ?>
-            </td>
-            <td> <?php 
-                    foreach ($room->getAvailableTimeFrames($start, $end) as $timeInterval) {
-                        echo '<li>';
-                        echo $timeInterval[0]->format('H:i:s');
-                        echo ' bis ';
-                        echo $timeInterval[1]->format('H:i:s');
-                        echo '</li>';
-                    } ?>
-            </td>
-        </tr>
-    </table> <?php
+    ?> 
+    <div class="room-info inline-block">
+        <?php echo "Raum: $room->number (Haus $room->building)"; ?><br>
+        <?php echo "Info: $room->name"; ?>
+    </div>
+    <div class="inline-block"> 
+        <ul class="room-times"> <?php 
+            foreach ($room->getAvailableTimeFrames($start, $end) as $timeInterval) {
+                echo '<li>';
+                echo $timeInterval[0]->format('H:i:s');
+                echo ' bis ';
+                echo $timeInterval[1]->format('H:i:s');
+                echo '</li>';
+            } ?>
+        </ul>
+    </div> <?php
     return ob_get_clean();
 }
 ?>
