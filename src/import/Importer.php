@@ -154,14 +154,18 @@ class Importer
     /**
      * Get the JSON for all days in a week.
      * 
-     * @param string $week in the from of [Year]-W[Week-Number], e.g. 2020-W16.
+     * @param string $week in the form of [Year]-W[Week-Number], e.g. 2020-W16.
      * @return array JSON for days in week.
      */
     private function getDays(string $week) : array
     {
-        $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage'];
-        if (!isset($days)) return [];
-        return $days;
+        if (!empty($this->json['stundenplan']['kalenderwochen'])) {
+            $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage'];
+            if (isset($days)) {
+                return $days;
+            }
+        }
+        return [];
     }
 
     /** 

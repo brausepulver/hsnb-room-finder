@@ -75,3 +75,30 @@ h3 + p {
     margin-bottom: 0.5rem;
     border: 1px solid black;
 }
+
+/* query.php */
+
+#results {
+    width: 500px;
+    padding: 0;
+}
+
+.room-info {
+    margin-right: 0.5rem;
+}
+
+.room-times {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.room-times li {
+    white-space: nowrap;
+    margin-top: 0;
+}
+
+/* Used in makeRoomTableView for side by side display */
+.inline-block {
+    display: inline-block;
+}
