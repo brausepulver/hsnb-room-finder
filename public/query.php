@@ -77,7 +77,7 @@ function makeSingleDayView() : string
     $rooms = getRoomsByInput();
     $html = '';
     foreach ($rooms as $room) {
-        $html .= '<li>' . makeRoomView($room) . '</li>' . PHP_EOL;
+        $html .= '<li>' . makeRoomTableView($room) . '</li>' . PHP_EOL;
     }
     return $html;
 }
@@ -150,7 +150,19 @@ function makeRoomView(Import\Utility\Room $room) : string
  */
 function makeRoomTableView(Import\Utility\Room $room) : string
 {
-    ;
+    global $start, $end;
+    $ret = "<table><tr><td>Raum: $room->number (Haus $room->building)<br>Info: $room->name</td><td>";
+    foreach($room->getAvailableTimeFrames($start, $end) as $timeInterval) {
+        $ret .= '<li>';
+        $ret .= $timeInterval[0]->format('H:i:s');
+        $ret .= ' bis ';
+        $ret .= $timeInterval[1]->format('H:i:s');
+        $ret .= '</li>';
+    }
+    $ret .= "</td></tr></table>";
+ 
+    return $ret;
+
 }
 ?>
 
