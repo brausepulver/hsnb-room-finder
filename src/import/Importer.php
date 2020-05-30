@@ -159,9 +159,13 @@ class Importer
      */
     private function getDays(string $week) : array
     {
-        $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage'];
-        if (!isset($days)) return [];
-        return $days;
+        if (!empty($this->json['stundenplan']['kalenderwochen'])) {
+            $days = $this->json['stundenplan']['kalenderwochen'][$week]['wochentage'];
+            if (isset($days)) {
+                return $days;
+            }
+        }
+        return [];
     }
 
     /** 
