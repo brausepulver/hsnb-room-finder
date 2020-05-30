@@ -64,7 +64,13 @@ function getRoomsByInput() : array
     $debug = false;
     $importer = new Importer($start, $end, $debug);
 
-    return $importer->getFilteredRooms($conditions);
+    $rooms = $importer->getFilteredRooms($conditions);
+    // Räume sortieren
+    if (usort($rooms, ['Import\\Utility\\Room', 'compareRoom'])) {
+        return $rooms;
+    } else {
+        return $rooms;
+    }
 }
 
 /**
@@ -160,9 +166,7 @@ function makeRoomTableView(Import\Utility\Room $room) : string
         $ret .= '</li>';
     }
     $ret .= "</td></tr></table>";
- 
     return $ret;
-
 }
 ?>
 

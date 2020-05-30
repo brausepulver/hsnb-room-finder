@@ -89,4 +89,20 @@ class Room
     {
         return (clone $start)->add(new \DateInterval('PT' . $index * 15 . 'M'));
     }
+
+    /**
+     * Vergleichen zweier Räume für die Sortierung des Arrays in query.php mittels usort.
+     * 
+     * @param Room $a
+     * @param Room $b
+     * 
+     * @return int Ganzzahl, die < 0 wenn Raum $a kleiner als Raum $b, 
+     *                           = 0 wenn Raum $a gleich Raum $b und
+     *                           > 0 wenn Raumm $a größer als Raum $b.
+     */
+    public static function compareRoom(Room $a, Room $b)
+    {
+        // Nur zum Test, ersetzen und implementieren
+        return intval(spl_object_hash($a)) - intval(spl_object_hash($b));
+    }
 }
