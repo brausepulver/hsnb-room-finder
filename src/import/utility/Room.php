@@ -100,7 +100,7 @@ class Room
      *                           = 0 wenn Raum $a gleich Raum $b und
      *                           > 0 wenn Raumm $a größer als Raum $b.
      */
-    public static function compareRoom(Room $a, Room $b)
+    public static function compareRoom(Room $a, Room $b) : int
     {
         // Nur zum Test, ersetzen und implementieren
         return intval(spl_object_hash($a)) - intval(spl_object_hash($b));
