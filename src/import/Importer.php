@@ -103,6 +103,10 @@ class Importer
     private function checkRoom(Room $room, array $conditions) : bool
     {
         $roomType = '';
+        if(empty($room->shortName)){
+            //räume ohne korrekten kurznamen werden entfernt (aktuell 3)
+            return false;
+        }
         if (isset($conditions['room_type'])) {
             $roomTypes = self::getRoomTypes();
             $roomType = $roomTypes[$conditions['room_type']];
