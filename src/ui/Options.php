@@ -90,7 +90,7 @@ class Options
     {
         if ($this->dayEnabled && !empty($this->day)) {
             if ($this->timeframeEnabled && !empty($this->timeframeFrom) && !empty($this->timeframeTo)) {
-                return  new \DateTime($this->day . ' ' . $this->timeframeFrom);
+                return  new \DateTime($this->day . ' ' . $this->timeframeTo);
             } else {
                 return (new \DateTime($this->day))->add(new \DateInterval('P1D'));
             }
