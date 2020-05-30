@@ -98,6 +98,10 @@ h3 + p {
     margin-top: 0;
 }
 
+#results .room-times li:last-of-type {
+    margin-bottom: 0;
+}
+
 /* Used in makeRoomTableView for side by side display */
 .inline-block {
     display: inline-block;
