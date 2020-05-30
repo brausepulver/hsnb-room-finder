@@ -102,7 +102,16 @@ class Room
      */
     public static function compareRoom(Room $a, Room $b)
     {
-        // Nur zum Test, ersetzen und implementieren
-        return intval(spl_object_hash($a)) - intval(spl_object_hash($b));
+        $number_a = $a->number;
+        $number_b = $b->number;
+        if($number_a == $number_b){
+            return 0;
+        }else{
+            if($number_a < $number_b){
+                return -1;
+            }else{
+                return 1;
+            }
+        }
     }
 }
