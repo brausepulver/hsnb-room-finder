@@ -1,7 +1,18 @@
 <?php
 require_once(__DIR__ . '/../src/import/Importer.php');
+require_once(__DIR__ . '/../src/ui/Options.php');
 
 use Import\Importer;
+use UI\Options;
+
+$options;
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+    $options = new Options($default = true);
+} else {
+    $options = new Options($default = false);
+}
 ?>
 
 <html lang="de">
@@ -22,24 +33,27 @@ use Import\Importer;
             <ul>
                 <li>
                     <span>
-                        <input type="checkbox" name="day_enabled" id="day_enabled" checked>
+                        <input type="checkbox" name="day_enabled" id="day_enabled" <?php if ($options->dayEnabled) echo 'checked'; ?>>
                         <label for="day_enabled">Tag</label>
                     </span>
-                    <input type="date" name="day" id="day">
+                    <input type="date" name="day" id="day" <?php if ($options->dayEnabled) echo 'value="' . $options->day . '"'; ?>>
                 </li>
                 <li id="timeframe-container">
                     <span>
-                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled" checked>
+                        <input type="checkbox" name="timeframe_enabled" id="timeframe_enabled" 
+                            <?php if ($options->timeframeEnabled) echo 'checked'; ?>>
                         <label for="timeframe_enabled">Zeitraum</label>
                     </span>
                 </li>
                 <li class="no-checkbox">
                     <label for="timeframe_from">von</label>
-                    <input type="time" name="timeframe_from" id="timeframe_from">
+                    <input type="time" name="timeframe_from" id="timeframe_from" 
+                        <?php if ($options->timeframeEnabled) echo 'value="' . $options->timeframeFrom . '"'; ?>>
                 </li>
                 <li class="no-checkbox">
                     <label for="timeframe_to">bis</label>
-                    <input type="time" name="timeframe_to" id="timeframe_to">
+                    <input type="time" name="timeframe_to" id="timeframe_to" 
+                        <?php if ($options->timeframeEnabled) echo 'value="' . $options->timeframeTo . '"'; ?>>
                 </li>
                 <!-- li>
                    <span>
@@ -57,34 +71,39 @@ use Import\Importer;
                 </li -->
                 <li>
                     <span>
-                        <input type="checkbox" name="room_number_enabled" id="room_number_enabled">
+                        <input type="checkbox" name="room_number_enabled" id="room_number_enabled" 
+                            <?php if ($options->roomNumberEnabled) echo 'checked'; ?>>
                         <label for="room_number_enabled">Nummer</label>
                     </span>
-                    <input type="text" size="5" maxlength="5" id="room_number" name="room_number">
+                    <input type="text" size="5" maxlength="5" id="room_number" name="room_number" 
+                        <?php if ($options->roomNumberEnabled) echo 'value="' . $options->roomNumber . '"'; ?>>
                 </li>
                 <li>
                     <span>
-                        <input type="checkbox" name="building_number_enabled" id="building_number_enabled">
+                        <input type="checkbox" name="building_number_enabled" id="building_number_enabled" 
+                            <?php if ($options->buildingNumberEnabled) echo 'checked'; ?>>
                         <label for="building_number_enabled">Haus</label>
                     </span>
                     <select name="building_number" id="building_number">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="3">3</option>
-                        <option value="4">4</option>
+<?php
+for ($i = 1; $i <= 4; $i++) {
+    $selected = $options->buildingNumberEnabled && $i == $options->buildingNumber ? 'selected' : '';
+    echo "<option value=\"$i\" $selected>$i</option>";
+} ?>
                     </select>
                 </li>
                 <li>
                     <span>
-                        <input type="checkbox" name="room_type_enabled" id="room_type_enabled">
+                        <input type="checkbox" name="room_type_enabled" id="room_type_enabled" 
+                            <?php if ($options->roomTypeEnabled) echo 'checked'; ?>>
                         <label for="room_type_enabled">Typ</label>
                     </span>
                     <select name="room_type" id="room_type">
 <?php
 for ($i = 0, $roomTypes = Importer::getRoomTypes(); $i < count($roomTypes); $i++) {
-    echo "<option value=\"$i\">" . $roomTypes[$i] . '</option>';
-}
-?>
+    $selected = ($options->roomTypeEnabled && $i == $options->roomType ? 'selected' : '');
+    echo "<option value=\"$i\" $selected>" . $roomTypes[$i] . '</option>';
+} ?>
                     </select>
                 </li>
                 <li>
