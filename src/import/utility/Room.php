@@ -104,23 +104,13 @@ class Room
     {
         $number_a = $a->number;
         $number_b = $b->number;
-        
-        if ($number_a == $number_b) {
-            return 0;
-        } else {
-            return ($number_a < $number_b) ? -1 : 1;
-        }
-
-    }
-
-    public static function compareBuilding(Room $a, Room $b) : int
-    {
         $building_a = $a->building;
         $building_b = $b->building;
-        if ($building_a == $building_b) {
-            return 0;
+
+        if ($building_a === $building_b) {
+            return strcmp($number_a, $number_b);
         } else {
-            return ($building_a < $building_b) ? -1 : 1;
+            return strcmp($building_a, $building_b);
         }
     }
 }
