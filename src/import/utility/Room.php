@@ -104,18 +104,13 @@ class Room
     {
         $number_a = $a->number;
         $number_b = $b->number;
-
         $building_a = $a->building;
         $building_b = $b->building;
 
-        if($building_a == $building_b){
+        if ($building_a === $building_b) {
             return strcmp($number_a, $number_b);
         } else {
             return strcmp($building_a, $building_b);
         }
-        
-
     }
-
-
 }

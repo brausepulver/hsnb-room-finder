@@ -39,12 +39,6 @@ function getRoomsByInput() : array
 
     $rooms = $importer->getFilteredRooms($conditions);
     // Räume sortieren
-    // if (usort($rooms, ['Import\\Utility\\Room', 'compareRoom'])) {
-    //     return $rooms;
-    // } else {
-    //     return $rooms;
-    // }
-    // Gebäude sortieren
     if (usort($rooms, ['Import\\Utility\\Room', 'compareRoom'])) {
         return $rooms;
     } else {
