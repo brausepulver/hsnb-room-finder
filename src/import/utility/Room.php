@@ -76,6 +76,8 @@ class Room
                 }
                 $j->add($interval);
             }
+
+            $s = count($availableOn) > 0 ? count($availableOn[count($availableOn)-1]) : 0;
             /* Überprüfen, ob der Raum nicht mehr verfügbar ist, aber es vorher war (es wurde ein [DateTime $start] angelegt),
                oder ob es sich bei dem Zeit-Index $i um die letzte Zeit in $available handelt (es muss ein DateTime $ende angefügt werden). */
             if ((!$available[$i] || $i === count($available)-1) && $s === 1) {
