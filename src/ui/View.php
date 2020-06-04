@@ -19,6 +19,7 @@ class View
     {
         $html = '';
         foreach ($rooms as $room) {
+            if (count($room->getAvailableTimeFrames($start, $end)) === 0) continue;
             $html .= '<li>' . self::makeRoomTableView($room, $start, $end) . '</li>' . PHP_EOL;
         }
         return $html;
@@ -107,10 +108,11 @@ class View
         \DateTimeInterface $end
     ) : string
     {
+        $roomNumberHtml = ($room->building === '1' ? $room->number : self::linkToFloorPlan($room));
         ob_start(); 
         ?> 
         <div class="room-info inline-block">
-            <?php echo "Raum: $room->number (Haus $room->building)"; ?><br>
+            <?php echo "Raum: $roomNumberHtml (Haus $room->building)"; ?><br>
             <?php echo "Info: $room->name"; ?>
         </div>
         <div class="inline-block"> 
@@ -125,5 +127,20 @@ class View
             </ul>
         </div> <?php
         return ob_get_clean();
+    }
+
+    /**
+     * Generieren eines Links zum Gebäudeplan. (GitHub Issue #12)
+     * 
+     * Die URL ist in der Form https://userwww2.hs-nb.de/ris/index.php?room=<Haus><Raum>, 
+     * z.B. https://userwww2.hs-nb.de/ris/index.php?room=2224 für Haus 2 und Raum 224.
+     * 
+     * @param \Import\Utility\Room $room
+     * @return string Anchor
+     */
+    public static function linkToFloorPlan(\Import\Utility\Room $room) : string
+    {
+        // Hier entsprechenden Link generieren und Raumnummer mit Link zurück geben.
+        return "$room->number";
     }
 }

@@ -30,8 +30,8 @@ function getRoomsByInput() : array
     global $start, $end;
     
     $options = new Options();
-    $start = $options->getStart();
-    $end = $options->getFinish();
+    $start = processTime($options->getStart());
+    $end = processTime($options->getFinish());
     $conditions = $options->getConditions();
 
     $debug = false;
@@ -44,6 +44,20 @@ function getRoomsByInput() : array
     } else {
         return $rooms;
     }
+}
+
+/**
+ * Zeit aufrunden. Zeiten, die zwischen 15-Minuten Intervallen liegen, werden damit eingefügt.
+ * 
+ * Problem: 13:50 Uhr soll auf 14:00 Uhr und nicht 13:00 aufgerundet werden.
+ * 
+ * @param \DateTimeInterface $time Zeit, die aufgerundet werden soll.
+ * @return \DateTimeInterface Gleiches Objekt, nur zeitlich bearbeitet.
+ */
+function processTime(\DateTimeInterface $time)
+{
+    $interval = new \DateInterval('PT15M');
+    return $time;
 }
 ?>
 
