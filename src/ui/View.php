@@ -19,6 +19,7 @@ class View
     {
         $html = '';
         foreach ($rooms as $room) {
+            if (count($room->getAvailableTimeFrames($start, $end)) === 0) continue;
             $html .= '<li>' . self::makeRoomTableView($room, $start, $end) . '</li>' . PHP_EOL;
         }
         return $html;
