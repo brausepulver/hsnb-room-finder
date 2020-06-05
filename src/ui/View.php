@@ -108,7 +108,7 @@ class View
         \DateTimeInterface $end
     ) : string
     {
-        $roomNumberHtml = ($room->building === '1' ? $room->number : self::linkToFloorPlan($room));
+        $roomNumberHtml = self::linkToFloorPlan($room);
         ob_start(); 
         ?> 
         <div class="room-info inline-block">
@@ -141,6 +141,7 @@ class View
     public static function linkToFloorPlan(\Import\Utility\Room $room) : string
     {
         // Hier entsprechenden Link generieren und Raumnummer mit Link zurück geben.
+        // check hier
         return "$room->number";
     }
 }

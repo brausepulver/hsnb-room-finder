@@ -56,8 +56,39 @@ function getRoomsByInput() : array
  */
 function processTime(\DateTimeInterface $time)
 {
-    $interval = new \DateInterval('PT15M');
-    return $time;
+    $timeclone = (clone $time);
+    $timeclone->add(new DateInterval('PT1H'));
+
+    $day = $timeclone->format('Y-m-d');
+    $hour = $time->format('H');
+    $hour2 = $timeclone->format('H');
+    
+    $time2 = date_create_from_format('Y-m-d H:i:s', "$day $hour2:00:00");
+    $time2->format('Y-m-d H:i:s');
+    $interval = $time->diff($time2);
+
+    $diff = $interval->format('%i');
+
+    if ($diff % 15 == 0) {
+        return $time;
+    }else{
+        if($diff < 30){
+            if($diff < 15){
+                return $time2;
+            }else{
+                $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:45:00");
+                return $output;
+            }
+        }else{
+            if($diff < 45){
+                $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:30:00");
+                return $output;
+            }else{
+                $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:15:00");
+                return $output;
+            }
+        }
+    }
 }
 ?>
 
