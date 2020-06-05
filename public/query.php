@@ -30,8 +30,8 @@ function getRoomsByInput() : array
     global $start, $end;
     
     $options = new Options();
-    $start = processTime($options->getStart());
-    $end = processTime($options->getFinish());
+    $start = roundUpTime($options->getStart());
+    $end = roundUpTime($options->getFinish());
     $conditions = $options->getConditions();
 
     $debug = false;
@@ -54,7 +54,7 @@ function getRoomsByInput() : array
  * @param \DateTimeInterface $time Zeit, die aufgerundet werden soll.
  * @return \DateTimeInterface Gleiches Objekt, nur zeitlich bearbeitet.
  */
-function processTime(\DateTimeInterface $time)
+function roundUpTime(\DateTimeInterface $time) : \DateTimeInterface
 {
     $timeclone = (clone $time);
     $timeclone->add(new DateInterval('PT1H'));
@@ -64,31 +64,24 @@ function processTime(\DateTimeInterface $time)
     $hour2 = $timeclone->format('H');
     
     $time2 = date_create_from_format('Y-m-d H:i:s', "$day $hour2:00:00");
-    $time2->format('Y-m-d H:i:s');
     $interval = $time->diff($time2);
 
-    $diff = $interval->format('%i');
+    $diff = intval($interval->format('%i'));
 
-    if ($diff % 15 == 0) {
+    if ($diff % 15 === 0) {
         return $time;
-    }else{
-        if($diff < 30){
-            if($diff < 15){
-                return $time2;
-            }else{
-                $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:45:00");
-                return $output;
-            }
-        }else{
-            if($diff < 45){
-                $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:30:00");
-                return $output;
-            }else{
-                $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:15:00");
-                return $output;
-            }
-        }
     }
+    if ($diff < 15){
+        return $time2;
+    } else if ($diff < 30) {
+        $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:45:00");
+        return $output;
+    } else if ($diff < 45) {
+        $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:30:00");
+        return $output;
+    }
+    $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:15:00");
+    return $output;
 }
 ?>
 
