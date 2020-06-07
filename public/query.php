@@ -89,10 +89,14 @@ require_once(__DIR__ . '/form.php');
 ?>
 
     <section>
-        <h3>Ergebnisse</h3>
-        <ul id="results">
 <?php
 $rooms = getRoomsByInput();
+$r = count($rooms);
+?>
+        <h3><?php echo "$r "; echo $r === 1 ? 'Ergebnis' : 'Ergebnisse'; ?></h3>
+        <ul id="results">
+<?php
+
 if ($view === 'single_day') {
     echo View::makeSingleDayView($rooms, $start, $end);
 }
