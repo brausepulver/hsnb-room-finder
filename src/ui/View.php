@@ -140,12 +140,11 @@ class View
      */
     public static function linkToFloorPlan(\Import\Utility\Room $room) : string
     {
-        if ($room->building != '2' && $room->building != '3') {
+        if ($room->building !== '2' && $room->building !== '3') {
             return $room->number;
-        } else {
-            $url = "https://userwww2.hs-nb.de/ris/index.php?room=$room->building$room->number";
-            $output = "<a href=$url>$room->number</a>";
-            return $output;
         }
+        $url = "https://userwww2.hs-nb.de/ris/index.php?room=$room->building$room->number";
+        $output = "<a href=\"$url\">$room->number</a>";
+        return $output;
     }
 }
