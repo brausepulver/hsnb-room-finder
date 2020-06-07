@@ -29,8 +29,8 @@ function getRoomsByInput() : array
 {
     global $start, $end, $options;
     
-    $start = processTime($options->getStart());
-    $end = processTime($options->getFinish());
+    $start = roundUpTime($options->getStart());
+    $end = roundUpTime($options->getFinish());
     $conditions = $options->getConditions();
 
     $debug = false;
@@ -53,10 +53,34 @@ function getRoomsByInput() : array
  * @param \DateTimeInterface $time Zeit, die aufgerundet werden soll.
  * @return \DateTimeInterface Gleiches Objekt, nur zeitlich bearbeitet.
  */
-function processTime(\DateTimeInterface $time)
+function roundUpTime(\DateTimeInterface $time) : \DateTimeInterface
 {
-    $interval = new \DateInterval('PT15M');
-    return $time;
+    $timeclone = (clone $time);
+    $timeclone->add(new DateInterval('PT1H'));
+
+    $day = $timeclone->format('Y-m-d');
+    $hour = $time->format('H');
+    $hour2 = $timeclone->format('H');
+    
+    $time2 = date_create_from_format('Y-m-d H:i:s', "$day $hour2:00:00");
+    $interval = $time->diff($time2);
+
+    $diff = intval($interval->format('%i'));
+
+    if ($diff % 15 === 0) {
+        return $time;
+    }
+    if ($diff < 15){
+        return $time2;
+    } else if ($diff < 30) {
+        $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:45:00");
+        return $output;
+    } else if ($diff < 45) {
+        $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:30:00");
+        return $output;
+    }
+    $output = date_create_from_format('Y-m-d H:i:s', "$day $hour:15:00");
+    return $output;
 }
 ?>
 
