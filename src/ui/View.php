@@ -7,7 +7,7 @@ namespace UI;
 class View
 {
     /**
-     * Die Standard-Ansicht die wir bis jetzt hatten, nur in einer extra Funktion.
+     * Standard-Ansicht.
      * 
      * @return string $html
      */
