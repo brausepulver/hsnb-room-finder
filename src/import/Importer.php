@@ -103,10 +103,7 @@ class Importer
     private function checkRoom(Room $room, array $conditions) : bool
     {
         $roomType = '';
-        if (empty($room->shortName)) {
-            // Räume ohne korrekten kurznamen werden entfernt (aktuell 3).
-            return false;
-        }
+        
         if (isset($conditions['room_type'])) {
             $roomTypes = self::getRoomTypes();
             $roomType = $roomTypes[$conditions['room_type']];
@@ -150,7 +147,9 @@ class Importer
             } catch (\OutOfBoundsException $e) {
                 throw new \Exception('ID property of room could not be found in JSON.');
             }
-            $rooms[$roomID] = new Room($roomJson); // exception handling in constructor
+            if (preg_match('/L[0-9]{6}/', $roomJson['kurzname']) === 1) {
+                $rooms[$roomID] = new Room($roomJson); // exception handling in constructor
+            }
         }
         return $rooms;
     }
