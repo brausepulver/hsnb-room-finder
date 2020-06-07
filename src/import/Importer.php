@@ -1,9 +1,9 @@
 <?php declare(strict_types=1);
 namespace Import;
 
-require_once(__DIR__ . '/Utility/Event.php');
-require_once(__DIR__ . '/Utility/Room.php');
-require_once(__DIR__ . '/Utility/TimeVector.php');
+require_once(__DIR__ . '/utility/Event.php');
+require_once(__DIR__ . '/utility/Room.php');
+require_once(__DIR__ . '/utility/TimeVector.php');
 use Import\Utility\{Event, Room, TimeVector};
 
 class Importer
