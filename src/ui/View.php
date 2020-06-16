@@ -27,7 +27,7 @@ class View
         $completelyAvailable = []; $partiallyAvailable = [];
         foreach ($this->rooms as $room) {
             $timeFrames = $room->getAvailableTimeFrames($this->start, $this->finish);
-            if (count($timeFrames) === 1) {
+            if (count($timeFrames) === 1 && $timeFrames[0][0] == $this->start && $timeFrames[0][1] == $this->finish) {
                 $completelyAvailable[] = $room;
             } else if (count($timeFrames) >= 1) {
                 $partiallyAvailable[] = $room;
