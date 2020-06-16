@@ -23,39 +23,29 @@ class Options
     public $roomTypeEnabled;
     public $roomType;
 
-    /**
-     * @param bool $default Ob es sich um den ersten Request einer Session handelt.
-     *                      Ist das der Fall, werden Standardwerte zugewiesen,
-     *                      anstatt auf $_GET zuzugreifen.
-     */
-    public function __construct(bool $default = false)
+    public function populate() : void
     {
-        if ($default) {
-            $this->setDefault();
-            return;
-        }
-
         $this->dayEnabled = isset($_GET['day_enabled']);
-        $this->day = $_GET['day'];
+        $this->day = $this->dayEnabled ? $_GET['day'] : (new \DateTime('today'))->format('Y-m-d');
     
         $this->timeframeEnabled = isset($_GET['timeframe_enabled']);
-        $this->timeframeFrom = $_GET['timeframe_from'];
-        $this->timeframeTo = $_GET['timeframe_to'];
+        $this->timeframeFrom = $this->timeframeEnabled ? $_GET['timeframe_from'] : '08:00';
+        $this->timeframeTo = $this->timeframeEnabled ? $_GET['timeframe_to'] : '20:00';
 
         $this->roomNumberEnabled = isset($_GET['room_number_enabled']);
-        $this->roomNumber = $_GET['room_number'];
+        $this->roomNumber = $this->roomNumberEnabled ? $_GET['room_number'] : '';
     
         $this->buildingNumberEnabled = isset($_GET['building_number_enabled']);
-        $this->buildingNumber = $_GET['building_number'];
+        $this->buildingNumber = $this->buildingNumberEnabled ? $_GET['building_number'] : '1';
     
         $this->roomTypeEnabled = isset($_GET['room_type_enabled']);
-        $this->roomType = $_GET['room_type'];
+        $this->roomType = $this->roomTypeEnabled ? $_GET['room_type'] : '0';
     }
 
-    private function setDefault()
+    public function populateDefault() : void
     {
         $this->dayEnabled = true;
-        $this->day = ''; // Aus footer.html implementieren.
+        $this->day = (new \DateTime('today'))->format('Y-m-d');
 
         $this->timeframeEnabled = true;
         $this->timeframeFrom = '08:00';
@@ -73,14 +63,7 @@ class Options
      */
     public function getStart() : \DateTime
     {
-        if ($this->dayEnabled && !empty($this->day)) {
-            if ($this->timeframeEnabled && !empty($this->timeframeFrom) && !empty($this->timeframeTo)) {
-                return new \DateTime($this->day . ' ' . $this->timeframeFrom);
-            } else {
-                return new \DateTime($this->day);
-            }
-        }
-        return new \DateTime('today');
+        return new \DateTime("$this->day $this->timeframeFrom");
     }
 
     /**
@@ -88,14 +71,7 @@ class Options
      */
     public function getFinish() : \DateTime
     {
-        if ($this->dayEnabled && !empty($this->day)) {
-            if ($this->timeframeEnabled && !empty($this->timeframeFrom) && !empty($this->timeframeTo)) {
-                return  new \DateTime($this->day . ' ' . $this->timeframeTo);
-            } else {
-                return (new \DateTime($this->day))->add(new \DateInterval('P1D'));
-            }
-        }
-        return (new \DateTime('today'))->add(new \DateInterval('P1D'));
+        return new \DateTime("$this->day $this->timeframeTo");
     }
 
     /**

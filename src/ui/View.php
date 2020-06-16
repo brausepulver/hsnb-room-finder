@@ -28,7 +28,7 @@ class View
     }
 
     /**
-     * Standard-Ansicht
+     * Standard-Ansicht.
      * 
      * @return string $html
      */
@@ -161,8 +161,11 @@ class View
      */
     public static function linkToFloorPlan(\Import\Utility\Room $room) : string
     {
-        // Hier entsprechenden Link generieren und Raumnummer mit Link zurück geben.
-        // check hier
-        return "$room->number";
+        if ($room->building !== '2' && $room->building !== '3') {
+            return $room->number;
+        }
+        $url = "https://userwww2.hs-nb.de/ris/index.php?room=$room->building$room->number";
+        $output = "<a href=\"$url\">$room->number</a>";
+        return $output;
     }
 }

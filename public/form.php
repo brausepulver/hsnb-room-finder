@@ -5,13 +5,12 @@ require_once(__DIR__ . '/../src/ui/Options.php');
 use Import\Importer;
 use UI\Options;
 
-$options;
+$options = new Options();
 
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-    $options = new Options($default = true);
+if (empty($_GET)) {
+    $options->populateDefault();
 } else {
-    $options = new Options($default = false);
+    $options->populate();
 }
 ?>
 
@@ -36,7 +35,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         <input type="checkbox" name="day_enabled" id="day_enabled" <?php if ($options->dayEnabled) echo 'checked'; ?>>
                         <label for="day_enabled">Tag</label>
                     </span>
-                    <input type="date" name="day" id="day" <?php if ($options->dayEnabled) echo 'value="' . $options->day . '"'; ?>>
+                    <input type="date" name="day" id="day" <?php echo 'value="' . $options->day . '"'; ?>>
                 </li>
                 <li id="timeframe-container">
                     <span>
@@ -48,12 +47,12 @@ if (session_status() === PHP_SESSION_NONE) {
                 <li class="no-checkbox">
                     <label for="timeframe_from">von</label>
                     <input type="time" name="timeframe_from" id="timeframe_from" 
-                        <?php if ($options->timeframeEnabled) echo 'value="' . $options->timeframeFrom . '"'; ?>>
+                        <?php echo 'value="' . $options->timeframeFrom . '"'; ?>>
                 </li>
                 <li class="no-checkbox">
                     <label for="timeframe_to">bis</label>
                     <input type="time" name="timeframe_to" id="timeframe_to" 
-                        <?php if ($options->timeframeEnabled) echo 'value="' . $options->timeframeTo . '"'; ?>>
+                        <?php echo 'value="' . $options->timeframeTo . '"'; ?>>
                 </li>
                 <!-- li>
                    <span>
@@ -76,7 +75,7 @@ if (session_status() === PHP_SESSION_NONE) {
                         <label for="room_number_enabled">Nummer</label>
                     </span>
                     <input type="text" size="5" maxlength="5" id="room_number" name="room_number" 
-                        <?php if ($options->roomNumberEnabled) echo 'value="' . $options->roomNumber . '"'; ?>>
+                        <?php echo 'value="' . $options->roomNumber . '"'; ?>>
                 </li>
                 <li>
                     <span>
@@ -87,7 +86,7 @@ if (session_status() === PHP_SESSION_NONE) {
                     <select name="building_number" id="building_number">
 <?php
 for ($i = 1; $i <= 4; $i++) {
-    $selected = $options->buildingNumberEnabled && $i == $options->buildingNumber ? 'selected' : '';
+    $selected = $i == $options->buildingNumber ? 'selected' : '';
     echo "<option value=\"$i\" $selected>$i</option>";
 } ?>
                     </select>
@@ -101,12 +100,13 @@ for ($i = 1; $i <= 4; $i++) {
                     <select name="room_type" id="room_type">
 <?php
 for ($i = 0, $roomTypes = Importer::getRoomTypes(); $i < count($roomTypes); $i++) {
-    $selected = ($options->roomTypeEnabled && $i == $options->roomType ? 'selected' : '');
+    $selected =  $i == $options->roomType ? 'selected' : '';
     echo "<option value=\"$i\" $selected>" . $roomTypes[$i] . '</option>';
 } ?>
                     </select>
                 </li>
                 <li>
+                    <input type="button" onclick="document.location = 'query.php'" value="Zurücksetzen">
                     <input type="submit" value="Suchen">
                 </li>
             </ul>

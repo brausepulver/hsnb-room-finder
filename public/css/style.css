@@ -13,7 +13,7 @@ form, #results {
     margin: 0 auto;
 }
 
-ul {
+form ul {
     list-style-type: none;
     padding: 0;
     margin: 0;

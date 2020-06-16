@@ -6,8 +6,9 @@ require_once(__DIR__ . '/../src/ui/View.php');
 use Import\Importer;
 use UI\{Options, View};
 
-$start; // global variables are used to make start available in makeRoomHtml()
+$start;
 $end;
+$options;
 
 /* Die $view Variable könnte dazu dienen, den Modus auszuwählen, wie die Räume angezeigt werden sollen.
    Eine Auswahl müsste in form.php eingebaut werden. */
@@ -19,17 +20,15 @@ $viewOptions = [
 $view = $viewOptions[0]; // Standard
 
 /**
- * Get all free rooms specified by the data entered by the user.
- * The method of choice is GET, to make the query RESTful.
+ * Ermitteln aller freien Räume anhand der durch den Nutzer in form.php eingegebenen Daten.
  * 
- * @return array of FreeRooms objects, 
- * each representing a free room that can be available at different times during the period.
+ * @return array Feld von Room Objekten
+ * wobei jedes einen freien Raum repräsentiert, der zu verschiedenen Zeiten während der Periode verfügbar sein kann.
  */
 function getRoomsByInput() : array
 {
-    global $start, $end;
+    global $start, $end, $options;
     
-    $options = new Options();
     $start = roundUpTime($options->getStart());
     $end = roundUpTime($options->getFinish());
     $conditions = $options->getConditions();
@@ -90,10 +89,14 @@ require_once(__DIR__ . '/form.php');
 ?>
 
     <section>
-        <h3>Ergebnisse</h3>
-        <ul id="results">
 <?php
 $rooms = getRoomsByInput();
+$r = count($rooms);
+?>
+        <h3><?php echo "$r "; echo $r === 1 ? 'Ergebnis' : 'Ergebnisse'; ?></h3>
+        <ul id="results">
+<?php
+
 if ($view === 'single_day') {
     echo View::makeSingleDayView($rooms, $start, $end);
 }
@@ -101,5 +104,5 @@ if ($view === 'single_day') {
         </ul>
     </section>
 
-<?php
-require_once(__DIR__ . '/footer.html');
+</body>
+</html>
