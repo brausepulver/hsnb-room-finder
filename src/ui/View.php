@@ -6,8 +6,29 @@ namespace UI;
  */
 class View
 {
+    private $rooms;
+    private $start;
+    private $finish;
+
+    public function __construct(array $rooms, \DateTimeInterface $start, \DateTimeInterface $finish)
+    {
+        $this->rooms = $rooms;
+        $this->start = $start;
+        $this->finish = $finish;
+    }
+
     /**
-     * Die Standard-Ansicht die wir bis jetzt hatten, nur in einer extra Funktion.
+     * Ansicht, die vollständig verfügbare Räume getrennt von teilweise verfügbaren Räumen anzeigt.
+     * 
+     * @return string html
+     */
+    public function splitAvailableView() : string
+    {
+        ;
+    }
+
+    /**
+     * Standard-Ansicht
      * 
      * @return string $html
      */
