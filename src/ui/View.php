@@ -6,6 +6,53 @@ namespace UI;
  */
 class View
 {
+    private $rooms;
+    private $start;
+    private $finish;
+
+    public function __construct(array $rooms, \DateTimeInterface $start, \DateTimeInterface $finish)
+    {
+        $this->rooms = $rooms;
+        $this->start = $start;
+        $this->finish = $finish;
+    }
+
+    /**
+     * Ansicht, die vollständig verfügbare Räume getrennt von teilweise verfügbaren Räumen anzeigt.
+     * 
+     * @return string html
+     */
+    public function splitAvailableView() : string
+    {
+        $completelyAvailable = []; $partiallyAvailable = [];
+        foreach ($this->rooms as $room) {
+            $timeFrames = $room->getAvailableTimeFrames($this->start, $this->finish);
+            if (count($timeFrames) === 1 && $timeFrames[0][0] == $this->start && $timeFrames[0][1] == $this->finish) {
+                $completelyAvailable[] = $room;
+            } else if (count($timeFrames) >= 1) {
+                $partiallyAvailable[] = $room;
+            }
+        }
+
+        $r = count($completelyAvailable);
+        $html = "<h3>$r vollständig " . ($r === 1 ? 'verfügbarer Raum' : 'verfügbare Räume') . '</h3>';
+        $html .= '<ul id="results">';
+        foreach ($completelyAvailable as $room) {
+            $html .= '<li>' . self::makeRoomTableView($room, $this->start, $this->finish) . '</li>';
+        }
+        $html .= '</ul>';
+
+        $r = count($partiallyAvailable);
+        $html .= "<h3>$r teilweise " . ($r === 1 ? 'verfügbarer Raum' : 'verfügbare Räume') . '</h3>';
+        $html .= '<ul id="results">';
+        foreach ($partiallyAvailable as $room) {
+            $html .= '<li>' . self::makeRoomTableView($room, $this->start, $this->finish) . '</li>';
+        }
+        $html .= '</ul>';
+
+        return $html;
+    }
+
     /**
      * Standard-Ansicht.
      * 

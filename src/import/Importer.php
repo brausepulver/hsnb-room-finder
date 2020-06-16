@@ -84,7 +84,9 @@ class Importer
                 if ($event->end < $this->start || $event->start > $this->end) { 
                     continue;
                 }
-                $rooms[$roomId]->occupy($event);
+                if (isset($rooms[$roomId])) {
+                    $rooms[$roomId]->occupy($event);
+                }
             }
         }
     }

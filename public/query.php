@@ -10,15 +10,6 @@ $start;
 $end;
 $options;
 
-/* Die $view Variable könnte dazu dienen, den Modus auszuwählen, wie die Räume angezeigt werden sollen.
-   Eine Auswahl müsste in form.php eingebaut werden. */
-$viewOptions = [
-    'single_day',
-    'single_day_week',
-    'week'
-];
-$view = $viewOptions[0]; // Standard
-
 /**
  * Ermitteln aller freien Räume anhand der durch den Nutzer in form.php eingegebenen Daten.
  * 
@@ -91,17 +82,9 @@ require_once(__DIR__ . '/form.php');
     <section>
 <?php
 $rooms = getRoomsByInput();
-$r = count($rooms);
+$view = new View($rooms, $start, $end);
+echo $view->splitAvailableView();
 ?>
-        <h3><?php echo "$r "; echo $r === 1 ? 'Ergebnis' : 'Ergebnisse'; ?></h3>
-        <ul id="results">
-<?php
-
-if ($view === 'single_day') {
-    echo View::makeSingleDayView($rooms, $start, $end);
-}
-?>
-        </ul>
     </section>
 
 </body>
