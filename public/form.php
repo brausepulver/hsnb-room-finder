@@ -21,7 +21,7 @@ if (empty($_GET)) {
     <meta name="author" content="Johannes Kindermann">
     <meta name="author" content="Florian Leder">
     <title>Raum-Finder</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="./public/css/style.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@exampledev/new.css@1/new.min.css">
 </head>
 <body>
