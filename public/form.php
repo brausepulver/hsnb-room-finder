@@ -28,7 +28,7 @@ if (empty($_GET)) {
     <h2>Raum-Finder</h2>
 
     <section>
-        <form action="query.php" method="GET">
+        <form action="./public/query.php" method="GET">
             <ul>
                 <li>
                     <span>
