@@ -54,40 +54,6 @@ class View
     }
 
     /**
-     * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über mehrere Wochen,
-     * und immer am gleichen Wochentag. (z.B. Montag über das gesamte Semester)
-     * 
-     * @param int $weekCount Anzahl der anzuzeigenden Wochen.
-     * @return string HTML
-     * 
-     * Weitere Parameter wären möglich, wie z.B. Intervall (ob nur alle 2 Wochen angezeigt werden soll).
-     * 
-     * Auch ist die Frage, ob verschiedene Importer angelegt werden sollen um die Events an verschiedenen Tagen abzufragen, 
-     * oder ob alle Events in die jeweiligen Räume eingelesen werden sollen, und dann abgefragt.
-     * 
-     * Die Darstellung könnte durch mehrere Tabellen nebeneinander, oder durch Tabs erfolgen.
-     */
-    public function makeSingleDayWeekView(int $weekCount) : string
-    {
-        /* Zu implementieren.
-        Es könnte wie in der Importer Klasse ein Counter die Wochen durchlaufen, 
-        und zum gleichen Wochentag die Räume mittels $room->getAvailableTimeFrames($start + k*week, $end + k*week) abfragen. */
-        ;
-    }
-
-    /**
-     * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über eine oder mehrere Wochen,
-     * aber Darstellung aller Wochentage, außer Sonnabend und Sonntag.
-     * 
-     * @param int $weekCount Anzahl der anzuzeigenden Wochen.
-     * @return string HTML
-     */
-    public function makeWeekView(int $weekCount) : string
-    {
-        ; // Zu implementieren
-    }
-
-    /**
      * Darstellen eines Room Objekts in einer HTML Tabellenansicht.
      * 
      * @param Room $room
@@ -133,5 +99,39 @@ class View
         $url = "https://userwww2.hs-nb.de/ris/index.php?room=$room->building$room->number";
         $output = "<a href=\"$url\">$room->number</a>";
         return $output;
+    }
+
+    /**
+     * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über mehrere Wochen,
+     * und immer am gleichen Wochentag. (z.B. Montag über das gesamte Semester)
+     * 
+     * @param int $weekCount Anzahl der anzuzeigenden Wochen.
+     * @return string HTML
+     * 
+     * Weitere Parameter wären möglich, wie z.B. Intervall (ob nur alle 2 Wochen angezeigt werden soll).
+     * 
+     * Auch ist die Frage, ob verschiedene Importer angelegt werden sollen um die Events an verschiedenen Tagen abzufragen, 
+     * oder ob alle Events in die jeweiligen Räume eingelesen werden sollen, und dann abgefragt.
+     * 
+     * Die Darstellung könnte durch mehrere Tabellen nebeneinander, oder durch Tabs erfolgen.
+     */
+    public function makeSingleDayWeekView(int $weekCount) : string
+    {
+        /* Zu implementieren.
+        Es könnte wie in der Importer Klasse ein Counter die Wochen durchlaufen, 
+        und zum gleichen Wochentag die Räume mittels $room->getAvailableTimeFrames($start + k*week, $end + k*week) abfragen. */
+        ;
+    }
+
+    /**
+     * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über eine oder mehrere Wochen,
+     * aber Darstellung aller Wochentage, außer Sonnabend und Sonntag.
+     * 
+     * @param int $weekCount Anzahl der anzuzeigenden Wochen.
+     * @return string HTML
+     */
+    public function makeWeekView(int $weekCount) : string
+    {
+        ; // Zu implementieren
     }
 }
