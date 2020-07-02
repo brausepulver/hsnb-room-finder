@@ -54,25 +54,6 @@ class View
     }
 
     /**
-     * Standard-Ansicht.
-     * 
-     * @return string $html
-     */
-    public static function makeSingleDayView(
-        array $rooms,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end
-    ) : string
-    {
-        $html = '';
-        foreach ($rooms as $room) {
-            if (count($room->getAvailableTimeFrames($start, $end)) === 0) continue;
-            $html .= '<li>' . self::makeRoomTableView($room, $start, $end) . '</li>' . PHP_EOL;
-        }
-        return $html;
-    }
-
-    /**
      * Erstellen einer Ansicht für die Ergebnisse einer Abfrage über mehrere Wochen,
      * und immer am gleichen Wochentag. (z.B. Montag über das gesamte Semester)
      * 
@@ -86,22 +67,12 @@ class View
      * 
      * Die Darstellung könnte durch mehrere Tabellen nebeneinander, oder durch Tabs erfolgen.
      */
-    public static function makeSingleDayWeekView(
-        array $rooms, 
-        int $weekCount,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end
-    ) : string
+    public function makeSingleDayWeekView(int $weekCount) : string
     {
-        /* Ersetzen und entsprechend implementieren.
+        /* Zu implementieren.
         Es könnte wie in der Importer Klasse ein Counter die Wochen durchlaufen, 
         und zum gleichen Wochentag die Räume mittels $room->getAvailableTimeFrames($start + k*week, $end + k*week) abfragen. */
-        $html = '';
-
-        foreach ($rooms as $room) {
-            $html .= '<li>' . self::makeRoomView($room, $start, $end) . '</li>' . PHP_EOL;
-        }
-        return $html;
+        ;
     }
 
     /**
@@ -111,36 +82,9 @@ class View
      * @param int $weekCount Anzahl der anzuzeigenden Wochen.
      * @return string HTML
      */
-    public static function makeWeekView(
-        array $rooms, 
-        int $weekCount,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end
-    ) : string
+    public function makeWeekView(int $weekCount) : string
     {
-        ;
-    }
-
-    /**
-     * Darstellen eines Room Objekts in HTML.
-     * 
-     * @param Room $room
-     * @return string HTML
-     */
-    public static function makeRoomView(
-        \Import\Utility\Room $room,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end
-    ) : string
-    {
-        $ret = "Raum: $room->number (Haus $room->building), $room->name";
-        foreach ($room->getAvailableTimeFrames($start, $end) as $timeInterval) {
-            $ret .= ', ';
-            $ret .= $timeInterval[0]->format('H:i:s');
-            $ret .= ' bis ';
-            $ret .= $timeInterval[1]->format('H:i:s');
-        }
-        return $ret;
+        ; // Zu implementieren
     }
 
     /**
@@ -149,11 +93,7 @@ class View
      * @param Room $room
      * @return string HTML
      */
-    public static function makeRoomTableView(
-        \Import\Utility\Room $room,
-        \DateTimeInterface $start,
-        \DateTimeInterface $end
-    ) : string
+    public function makeRoomTableView(\Import\Utility\Room $room) : string
     {
         $roomNumberHtml = self::linkToFloorPlan($room);
         ob_start(); 
@@ -164,7 +104,7 @@ class View
         </div>
         <div class="inline-block"> 
             <ul class="room-times"> <?php 
-                foreach ($room->getAvailableTimeFrames($start, $end) as $timeInterval) {
+                foreach ($room->getAvailableTimeFrames($this->start, $this->end) as $timeInterval) {
                     echo '<li>';
                     echo $timeInterval[0]->format('H:i:s');
                     echo ' bis ';

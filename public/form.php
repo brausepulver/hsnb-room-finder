@@ -54,20 +54,6 @@ if (empty($_GET)) {
                     <input type="time" name="timeframe_to" id="timeframe_to" 
                         <?php echo 'value="' . $options->timeframeTo . '"'; ?>>
                 </li>
-                <!-- li>
-                   <span>
-                       <input type="checkbox" name="min_time_enabled" id="min_time_enabled" checked disabled>
-                       <label for="min_time_enabled">mindestens frei für</label> 
-                   </span> 
-                   <select name="min_time" id="min_time">
-                        <option value="15">unter 30 min</option>
-                        <option value="30">30 min</option>
-                        <option value="45">45 min</option>
-                        <option value="60">60 min</option>
-                        <option value="120">120 min</option>
-                        <option value="720">ganztägig</option>
-                   </select>
-                </li -->
                 <li>
                     <span>
                         <input type="checkbox" name="room_number_enabled" id="room_number_enabled" 
