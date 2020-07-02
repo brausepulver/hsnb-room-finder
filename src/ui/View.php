@@ -104,7 +104,7 @@ class View
         </div>
         <div class="inline-block"> 
             <ul class="room-times"> <?php 
-                foreach ($room->getAvailableTimeFrames($this->start, $this->end) as $timeInterval) {
+                foreach ($room->getAvailableTimeFrames($this->start, $this->finish) as $timeInterval) {
                     echo '<li>';
                     echo $timeInterval[0]->format('H:i:s');
                     echo ' bis ';
