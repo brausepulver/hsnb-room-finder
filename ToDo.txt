@@ -1,0 +1,7 @@
+Logo und Aboput einbauen
+Suche über mehrere Tage
+Bereinigen des Raum-Datenbestandes 
+  siehe https://portal.hs-nb.de/ext/stundenplananzeige/index.php?modul=Veranstaltungsort&seite=datenliste
+Erweiterung des Rauminformationssystems (RIS) auf die anderen Gebäude
+
+
